@@ -1,16 +1,36 @@
-# React + Vite
+팀원 정보 관리 기능
+-팀원 이름을 추가, 수정, 삭제하는 기능
+-각 팀원별로 가능한 요일과 시간을 선택, 수정, 삭제 하는 기능
+-팀원별 가능한 시간을 목록 또는 표 형태로 표시하는 기능
+-사용자가 설정한 조건에 맞는 시간을 표 또는 목록으로 정리하여 보여주는 기능
+-각 팀원이 역할을 추가, 수정, 삭제하는 기능
+-팀원별 역할을 표시하는 기능 (ex. 홍길동-자료조사)
+-각 팀원별 메모를 작성하는 기능
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+데이터 저장 기능
+-입력한 팀원 정보, 가능한 시간, 역할, 메모를 저장하는 기능
+-프로그램을 다시 실행하거나 새로고침해도 저장된 데이터를 다시 불러오는 기능
 
-Currently, two official plugins are available:
+## 기능
+<팀원 정보 관리 기능>
+-팀원 이름을 추가, 수정, 삭제하는 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+-각 팀원별로 가능한 요일과 시간을 선택, 수정, 삭제 하는 기능
+-팀원별 가능한 시간을 목록 또는 표 형태로 표시하는 기능
+-사용자가 설정한 조건에 맞는 시간을 표 또는 목록으로 정리하여 보여주는 기능
 
-## React Compiler
+-각 팀원이 역할을 추가, 수정, 삭제하는 기능
+-팀원별 역할을 표시하는 기능 (ex. 홍길동-자료조사)
+-각 팀원별 메모를 작성하는 기능
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+<데이터 저장 기능>
+-입력한 팀원 정보, 가능한 시간, 역할, 메모를 저장하는 기능
+-프로그램을 다시 실행하거나 새로고침해도 저장된 데이터를 다시 불러오는 기능
 
-## Expanding the ESLint configuration
+## 페이지 구성
+-메인 페이지 (공통 시간 표시등)
+-팀 관리 페이지 (이름 설정, 시간 관리 등)
+-역할 관리 페이지 (역할 설정, 메모 관리 등)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 기술 스택
+프론트엔드(React) + 백엔드(Firebase)
