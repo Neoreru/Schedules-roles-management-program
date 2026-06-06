@@ -52,6 +52,9 @@ function App() {
   const [deviceId] = useState(getDeviceId)
   const [editingNameId, setEditingNameId] = useState(null)
   const [editingName, setEditingName] = useState("")
+  const [editingRoleId, setEditingRoleId] = useState(null)
+  const [editingRole, setEditingRole] = useState("")
+  const [editingMemo, setEditingMemo] = useState("")
 
   useEffect(() => {
     const q = query(collection(db, "members"), orderBy("createdAt", "asc"))
@@ -333,23 +336,50 @@ function App() {
                   {member.name} {mine ? "(내 정보)" : "(보기 전용)"}
                 </h3>
 
-                <div className="role-input-box">
-                  <input
-                    className="role-input"
-                    value={member.role || ""}
-                    disabled={!mine}
-                    onChange={(e) => updateRole(member, e.target.value)}
-                    placeholder="역할 입력"
-                  />
+                {mine && editingRoleId === member.id ? (
+                  <div className="role-input-box">
+                    <input
+                      className="role-input"
+                      value={editingRole}
+                      onChange={(e) => setEditingRole(e.target.value)}
+                      placeholder="역할 입력"
+                    />
 
-                  <textarea
-                    className="memo-input"
-                    value={member.memo || ""}
-                    disabled={!mine}
-                    onChange={(e) => updateMemo(member, e.target.value)}
-                    placeholder="메모 입력"
-                  />
-                </div>
+                    <textarea
+                      className="memo-input"
+                      value={editingMemo}
+                      onChange={(e) => setEditingMemo(e.target.value)}
+                      placeholder="메모 입력"
+                    />
+
+                    <button
+                      onClick={() => {
+                        updateRole(member, editingRole)
+                        updateMemo(member, editingMemo)
+                        setEditingRoleId(null)
+                      }}
+                    >
+                      ✓ 저장
+                    </button>
+                  </div>
+                ) : (
+                  <div className="role-view-box">
+                    <p className="role-text">역할: {member.role || "역할 없음"}</p>
+                    <p className="memo-text">메모: {member.memo || "메모 없음"}</p>
+
+                    {mine && (
+                      <button
+                        onClick={() => {
+                          setEditingRoleId(member.id)
+                          setEditingRole(member.role || "")
+                          setEditingMemo(member.memo || "")
+                        }}
+                      >
+                        ↻ 수정
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             )
           })}
