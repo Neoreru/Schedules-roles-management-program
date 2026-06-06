@@ -51,6 +51,7 @@ function App() {
   const [minPeople, setMinPeople] = useState(2)
   const [deviceId] = useState(getDeviceId)
   const [editingNameId, setEditingNameId] = useState(null)
+  const [editingName, setEditingName] = useState("")
 
   useEffect(() => {
     const q = query(collection(db, "members"), orderBy("createdAt", "asc"))
@@ -226,14 +227,19 @@ function App() {
                   <div className="name-edit-box">
                     <input
                       className="name-input"
-                      value={member.name}
-                      onChange={(e) =>
-                        updateMemberName(member, e.target.value)
-                      }
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
                       placeholder="내 이름 입력"
                     />
 
-                    <button onClick={() => setEditingNameId(null)}>✓</button>
+                    <button
+                      onClick={() => {
+                        updateMemberName(member, editingName)
+                        setEditingNameId(null)
+                      }}
+                    >
+                      ✓
+                    </button>
                   </div>
                 ) : (
                   <div className="name-view-box">
@@ -242,7 +248,12 @@ function App() {
                     </strong>
 
                     {mine && (
-                      <button onClick={() => setEditingNameId(member.id)}>
+                      <button
+                        onClick={() => {
+                          setEditingNameId(member.id)
+                          setEditingName(member.name)
+                        }}
+                      >
                         ↻
                       </button>
                     )}
