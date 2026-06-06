@@ -67,9 +67,9 @@ function App() {
     return () => unsubscribe()
   }, [])
 
-  const isMine = (member) => {
-    return member.ownerId === deviceId
-  }
+const isMine = (member) => {
+  return member.ownerId === deviceId || !member.ownerId
+}
 
   const addMember = async () => {
     if (name.trim() === "") return
@@ -155,6 +155,15 @@ function App() {
     return result
   }
 
+  const sortedMembers = [...members].sort((a, b) => {
+  const aMine = isMine(a)
+  const bMine = isMine(b)
+
+  if (aMine && !bMine) return -1
+  if (!aMine && bMine) return 1
+  return 0
+})
+
   return (
     <div className="container">
       <h1>팀 일정 및 역할 관리</h1>
@@ -211,7 +220,7 @@ function App() {
 
           <button onClick={addMember}>내 정보 추가</button>
 
-          {members.map((member) => {
+          {sortedMembers.map((member) => {
             const mine = isMine(member)
 
             return (
@@ -284,7 +293,7 @@ function App() {
         <section>
           <h2>역할 및 메모 관리</h2>
 
-          {members.map((member) => {
+          {sortedMembers.map((member) => {
             const mine = isMine(member)
 
             return (
