@@ -48,7 +48,6 @@ function getDeviceId() {
 function App() {
   const [page, setPage] = useState("main")
   const [members, setMembers] = useState([])
-  const [name, setName] = useState("")
   const [minPeople, setMinPeople] = useState(2)
   const [deviceId] = useState(getDeviceId)
   const [editingNameId, setEditingNameId] = useState(null)
@@ -85,18 +84,14 @@ function App() {
   })
 
   const addMember = async () => {
-    const memberName = name.trim() === "" ? "이름 없음" : name
-
     await addDoc(collection(db, "members"), {
-      name: memberName,
+      name: "이름 없음",
       availableTimes: [],
       role: "",
       memo: "",
       ownerId: deviceId,
       createdAt: Date.now(),
     })
-
-    setName("")
   }
 
   const deleteMember = async (member) => {
@@ -242,7 +237,9 @@ function App() {
                   </div>
                 ) : (
                   <div className="name-view-box">
-                    <strong>{member.name}</strong>
+                    <strong>
+                      {member.name} {mine ? "(내 정보)" : "(보기 전용)"}
+                    </strong>
 
                     {mine && (
                       <button onClick={() => setEditingNameId(member.id)}>
@@ -255,7 +252,9 @@ function App() {
                 {mine ? (
                   <button onClick={() => deleteMember(member)}>삭제</button>
                 ) : (
-                  <span> 다른 팀원의 정보라 수정할 수 없습니다.</span>
+                  <p className="readonly-text">
+                    다른 팀원의 정보라 수정할 수 없습니다.
+                  </p>
                 )}
 
                 <h3>가능 시간 선택</h3>

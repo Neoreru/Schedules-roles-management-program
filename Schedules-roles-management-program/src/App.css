@@ -62,6 +62,8 @@ td {
 }
 
 
+
+
 .add-member-box {
   display: flex;
   justify-content: center;
@@ -79,10 +81,16 @@ td {
 }
 
 .name-input {
-  width: 220px;
+  width: 240px;
   padding: 10px;
   font-size: 18px;
   text-align: center;
+}
+
+.readonly-text {
+  text-align: center;
+  color: #777;
+  font-size: 15px;
 }
 
 .role-input-box {
@@ -94,15 +102,15 @@ td {
 }
 
 .role-input {
-  width: 300px;
+  width: 320px;
   padding: 12px;
   font-size: 18px;
   text-align: center;
 }
 
 .memo-input {
-  width: 420px;
-  height: 140px;
+  width: 460px;
+  height: 150px;
   padding: 12px;
   font-size: 18px;
   resize: vertical;
