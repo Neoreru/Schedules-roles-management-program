@@ -31,21 +31,29 @@ const times = [
   "21:00",
   "22:00",
   "23:00",
-  "00:00"
+  "00:00",
 ]
+
+function getDeviceId() {
+  let deviceId = localStorage.getItem("deviceId")
+
+  if (!deviceId) {
+    deviceId = crypto.randomUUID()
+    localStorage.setItem("deviceId", deviceId)
+  }
+
+  return deviceId
+}
 
 function App() {
   const [page, setPage] = useState("main")
   const [members, setMembers] = useState([])
   const [name, setName] = useState("")
   const [minPeople, setMinPeople] = useState(2)
+  const [deviceId] = useState(getDeviceId)
 
-  // Firebase 실시간 동기화
   useEffect(() => {
-    const q = query(
-      collection(db, "members"),
-      orderBy("createdAt", "asc")
-    )
+    const q = query(collection(db, "members"), orderBy("createdAt", "asc"))
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const memberList = snapshot.docs.map((doc) => ({
@@ -59,7 +67,10 @@ function App() {
     return () => unsubscribe()
   }, [])
 
-  // 팀원 추가
+  const isMine = (member) => {
+    return member.ownerId === deviceId
+  }
+
   const addMember = async () => {
     if (name.trim() === "") return
 
@@ -68,32 +79,33 @@ function App() {
       availableTimes: [],
       role: "",
       memo: "",
+      ownerId: deviceId,
       createdAt: Date.now(),
     })
 
     setName("")
   }
 
-  // 팀원 삭제
-  const deleteMember = async (id) => {
-    await deleteDoc(doc(db, "members", id))
+  const deleteMember = async (member) => {
+    if (!isMine(member)) return
+
+    await deleteDoc(doc(db, "members", member.id))
   }
 
-  // 이름 수정
-  const updateMemberName = async (id, newName) => {
-    await updateDoc(doc(db, "members", id), {
+  const updateMemberName = async (member, newName) => {
+    if (!isMine(member)) return
+
+    await updateDoc(doc(db, "members", member.id), {
       name: newName,
     })
   }
 
-  // 시간 체크
   const toggleTime = async (member, day, time) => {
+    if (!isMine(member)) return
+
     const timeKey = `${day} ${time}`
-
     const availableTimes = member.availableTimes || []
-
-    const alreadySelected =
-      availableTimes.includes(timeKey)
+    const alreadySelected = availableTimes.includes(timeKey)
 
     const newAvailableTimes = alreadySelected
       ? availableTimes.filter((t) => t !== timeKey)
@@ -104,21 +116,22 @@ function App() {
     })
   }
 
-  // 역할 수정
-  const updateRole = async (id, role) => {
-    await updateDoc(doc(db, "members", id), {
+  const updateRole = async (member, role) => {
+    if (!isMine(member)) return
+
+    await updateDoc(doc(db, "members", member.id), {
       role,
     })
   }
 
-  // 메모 수정
-  const updateMemo = async (id, memo) => {
-    await updateDoc(doc(db, "members", id), {
+  const updateMemo = async (member, memo) => {
+    if (!isMine(member)) return
+
+    await updateDoc(doc(db, "members", member.id), {
       memo,
     })
   }
 
-  // 공통 가능 시간 계산
   const getCommonTimes = () => {
     const result = []
 
@@ -126,19 +139,14 @@ function App() {
       times.forEach((time) => {
         const timeKey = `${day} ${time}`
 
-        const availableMembers = members.filter(
-          (member) =>
-            (member.availableTimes || []).includes(
-              timeKey
-            )
+        const availableMembers = members.filter((member) =>
+          (member.availableTimes || []).includes(timeKey)
         )
 
         if (availableMembers.length >= minPeople) {
           result.push({
             time: timeKey,
-            members: availableMembers.map(
-              (member) => member.name
-            ),
+            members: availableMembers.map((member) => member.name),
           })
         }
       })
@@ -152,34 +160,22 @@ function App() {
       <h1>팀 일정 및 역할 관리</h1>
 
       <nav>
-        <button onClick={() => setPage("main")}>
-          메인 페이지
-        </button>
-
-        <button onClick={() => setPage("team")}>
-          팀 관리 페이지
-        </button>
-
-        <button onClick={() => setPage("role")}>
-          역할 관리 페이지
-        </button>
+        <button onClick={() => setPage("main")}>메인 페이지</button>
+        <button onClick={() => setPage("team")}>팀 관리 페이지</button>
+        <button onClick={() => setPage("role")}>역할 관리 페이지</button>
       </nav>
 
-      {/* 메인 페이지 */}
       {page === "main" && (
         <section>
           <h2>공통 가능 시간</h2>
 
           <label>
             최소 가능 인원:
-
             <input
               type="number"
               value={minPeople}
               min="1"
-              onChange={(e) =>
-                setMinPeople(Number(e.target.value))
-              }
+              onChange={(e) => setMinPeople(Number(e.target.value))}
             />
           </label>
 
@@ -195,10 +191,7 @@ function App() {
               {getCommonTimes().map((item, index) => (
                 <tr key={index}>
                   <td>{item.time}</td>
-
-                  <td>
-                    {item.members.join(", ")}
-                  </td>
+                  <td>{item.members.join(", ")}</td>
                 </tr>
               ))}
             </tbody>
@@ -206,147 +199,122 @@ function App() {
         </section>
       )}
 
-      {/* 팀 관리 페이지 */}
       {page === "team" && (
         <section>
           <h2>팀원 정보 관리</h2>
 
           <input
             value={name}
-            onChange={(e) =>
-              setName(e.target.value)
-            }
-            placeholder="팀원 이름 입력"
+            onChange={(e) => setName(e.target.value)}
+            placeholder="내 이름 입력"
           />
 
-          <button onClick={addMember}>
-            추가
-          </button>
+          <button onClick={addMember}>내 정보 추가</button>
 
-          {members.map((member) => (
-            <div className="card" key={member.id}>
-              <input
-                value={member.name}
-                onChange={(e) =>
-                  updateMemberName(
-                    member.id,
-                    e.target.value
-                  )
-                }
-              />
+          {members.map((member) => {
+            const mine = isMine(member)
 
-              <button
-                onClick={() =>
-                  deleteMember(member.id)
-                }
-              >
-                삭제
-              </button>
+            return (
+              <div className="card" key={member.id}>
+                <input
+                  value={member.name}
+                  disabled={!mine}
+                  onChange={(e) => updateMemberName(member, e.target.value)}
+                />
 
-              <h3>가능 시간 선택</h3>
+                {mine ? (
+                  <button onClick={() => deleteMember(member)}>삭제</button>
+                ) : (
+                  <span> 다른 팀원의 정보라 수정할 수 없습니다.</span>
+                )}
 
-              <table>
-                <thead>
-                  <tr>
-                    <th>시간</th>
+                <h3>가능 시간 선택</h3>
 
-                    {days.map((day) => (
-                      <th key={day}>{day}</th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {times.map((time) => (
-                    <tr key={time}>
-                      <td>{time}</td>
-
-                      {days.map((day) => {
-                        const timeKey =
-                          `${day} ${time}`
-
-                        const checked =
-                          (
-                            member.availableTimes ||
-                            []
-                          ).includes(timeKey)
-
-                        return (
-                          <td key={day}>
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={() =>
-                                toggleTime(
-                                  member,
-                                  day,
-                                  time
-                                )
-                              }
-                            />
-                          </td>
-                        )
-                      })}
+                <table>
+                  <thead>
+                    <tr>
+                      <th>시간</th>
+                      {days.map((day) => (
+                        <th key={day}>{day}</th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
 
-              <h3>선택된 가능 시간</h3>
+                  <tbody>
+                    {times.map((time) => (
+                      <tr key={time}>
+                        <td>{time}</td>
 
-              <p>
-                {(member.availableTimes || [])
-                  .length > 0
-                  ? member.availableTimes.join(", ")
-                  : "선택된 시간이 없습니다."}
-              </p>
-            </div>
-          ))}
+                        {days.map((day) => {
+                          const timeKey = `${day} ${time}`
+                          const checked = (member.availableTimes || []).includes(
+                            timeKey
+                          )
+
+                          return (
+                            <td key={day}>
+                              <input
+                                type="checkbox"
+                                checked={checked}
+                                disabled={!mine}
+                                onChange={() => toggleTime(member, day, time)}
+                              />
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <h3>선택된 가능 시간</h3>
+
+                <p>
+                  {(member.availableTimes || []).length > 0
+                    ? member.availableTimes.join(", ")
+                    : "선택된 시간이 없습니다."}
+                </p>
+              </div>
+            )
+          })}
         </section>
       )}
 
-      {/* 역할 페이지 */}
       {page === "role" && (
         <section>
           <h2>역할 및 메모 관리</h2>
 
-          {members.map((member) => (
-            <div className="card" key={member.id}>
-              <h3>{member.name}</h3>
+          {members.map((member) => {
+            const mine = isMine(member)
 
-              <input
-                value={member.role || ""}
-                onChange={(e) =>
-                  updateRole(
-                    member.id,
-                    e.target.value
-                  )
-                }
-                placeholder="역할 입력"
-              />
+            return (
+              <div className="card" key={member.id}>
+                <h3>
+                  {member.name} {mine ? "(내 정보)" : "(보기 전용)"}
+                </h3>
 
-              <textarea
-                value={member.memo || ""}
-                onChange={(e) =>
-                  updateMemo(
-                    member.id,
-                    e.target.value
-                  )
-                }
-                placeholder="메모 입력"
-              />
+                <input
+                  value={member.role || ""}
+                  disabled={!mine}
+                  onChange={(e) => updateRole(member, e.target.value)}
+                  placeholder="역할 입력"
+                />
 
-              <p>
-                <strong>{member.name}</strong>
-                {" - "}
-                {member.role || "역할 없음"}
-              </p>
+                <textarea
+                  value={member.memo || ""}
+                  disabled={!mine}
+                  onChange={(e) => updateMemo(member, e.target.value)}
+                  placeholder="메모 입력"
+                />
 
-              <p>
-                메모: {member.memo || "메모 없음"}
-              </p>
-            </div>
-          ))}
+                <p>
+                  <strong>{member.name}</strong> - {member.role || "역할 없음"}
+                </p>
+
+                <p>메모: {member.memo || "메모 없음"}</p>
+              </div>
+            )
+          })}
         </section>
       )}
     </div>
