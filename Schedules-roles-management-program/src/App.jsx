@@ -51,6 +51,7 @@ function App() {
   const [name, setName] = useState("")
   const [minPeople, setMinPeople] = useState(2)
   const [deviceId] = useState(getDeviceId)
+  const [editingNameId, setEditingNameId] = useState(null)
 
   useEffect(() => {
     const q = query(collection(db, "members"), orderBy("createdAt", "asc"))
@@ -67,15 +68,27 @@ function App() {
     return () => unsubscribe()
   }, [])
 
-const isMine = (member) => {
-  return member.ownerId === deviceId || !member.ownerId
-}
+  const isMine = (member) => {
+    return member.ownerId === deviceId || !member.ownerId
+  }
+
+  const myMembers = members.filter((member) => isMine(member))
+  const hasMyMember = myMembers.length > 0
+
+  const sortedMembers = [...members].sort((a, b) => {
+    const aMine = isMine(a)
+    const bMine = isMine(b)
+
+    if (aMine && !bMine) return -1
+    if (!aMine && bMine) return 1
+    return 0
+  })
 
   const addMember = async () => {
-    if (name.trim() === "") return
+    const memberName = name.trim() === "" ? "이름 없음" : name
 
     await addDoc(collection(db, "members"), {
-      name,
+      name: memberName,
       availableTimes: [],
       role: "",
       memo: "",
@@ -155,15 +168,6 @@ const isMine = (member) => {
     return result
   }
 
-  const sortedMembers = [...members].sort((a, b) => {
-  const aMine = isMine(a)
-  const bMine = isMine(b)
-
-  if (aMine && !bMine) return -1
-  if (!aMine && bMine) return 1
-  return 0
-})
-
   return (
     <div className="container">
       <h1>팀 일정 및 역할 관리</h1>
@@ -212,24 +216,41 @@ const isMine = (member) => {
         <section>
           <h2>팀원 정보 관리</h2>
 
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="내 이름 입력"
-          />
-
-          <button onClick={addMember}>내 정보 추가</button>
+          {!hasMyMember && (
+            <div className="add-member-box">
+              <button onClick={addMember}>내 정보 추가</button>
+            </div>
+          )}
 
           {sortedMembers.map((member) => {
             const mine = isMine(member)
 
             return (
               <div className="card" key={member.id}>
-                <input
-                  value={member.name}
-                  disabled={!mine}
-                  onChange={(e) => updateMemberName(member, e.target.value)}
-                />
+                {mine && editingNameId === member.id ? (
+                  <div className="name-edit-box">
+                    <input
+                      className="name-input"
+                      value={member.name}
+                      onChange={(e) =>
+                        updateMemberName(member, e.target.value)
+                      }
+                      placeholder="내 이름 입력"
+                    />
+
+                    <button onClick={() => setEditingNameId(null)}>✓</button>
+                  </div>
+                ) : (
+                  <div className="name-view-box">
+                    <strong>{member.name}</strong>
+
+                    {mine && (
+                      <button onClick={() => setEditingNameId(member.id)}>
+                        ↻
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {mine ? (
                   <button onClick={() => deleteMember(member)}>삭제</button>
@@ -302,25 +323,23 @@ const isMine = (member) => {
                   {member.name} {mine ? "(내 정보)" : "(보기 전용)"}
                 </h3>
 
-                <input
-                  value={member.role || ""}
-                  disabled={!mine}
-                  onChange={(e) => updateRole(member, e.target.value)}
-                  placeholder="역할 입력"
-                />
+                <div className="role-input-box">
+                  <input
+                    className="role-input"
+                    value={member.role || ""}
+                    disabled={!mine}
+                    onChange={(e) => updateRole(member, e.target.value)}
+                    placeholder="역할 입력"
+                  />
 
-                <textarea
-                  value={member.memo || ""}
-                  disabled={!mine}
-                  onChange={(e) => updateMemo(member, e.target.value)}
-                  placeholder="메모 입력"
-                />
-
-                <p>
-                  <strong>{member.name}</strong> - {member.role || "역할 없음"}
-                </p>
-
-                <p>메모: {member.memo || "메모 없음"}</p>
+                  <textarea
+                    className="memo-input"
+                    value={member.memo || ""}
+                    disabled={!mine}
+                    onChange={(e) => updateMemo(member, e.target.value)}
+                    placeholder="메모 입력"
+                  />
+                </div>
               </div>
             )
           })}

@@ -60,3 +60,50 @@ td {
   padding: 8px;
   text-align: center;
 }
+
+
+.add-member-box {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.name-edit-box,
+.name-view-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.name-input {
+  width: 220px;
+  padding: 10px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.role-input-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 15px;
+}
+
+.role-input {
+  width: 300px;
+  padding: 12px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.memo-input {
+  width: 420px;
+  height: 140px;
+  padding: 12px;
+  font-size: 18px;
+  resize: vertical;
+}
