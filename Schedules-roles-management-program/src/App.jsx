@@ -45,6 +45,7 @@ function App() {
   const [editingRoleId, setEditingRoleId] = useState(null)
   const [editingRole, setEditingRole] = useState("")
   const [editingMemo, setEditingMemo] = useState("")
+  const [viewMode, setViewMode] = useState("table")
 
   useEffect(() => {
     const q = query(collection(db, "members"), orderBy("createdAt", "asc"))
@@ -61,20 +62,13 @@ function App() {
     return () => unsubscribe()
   }, [])
 
-  useEffect(() => {
-    setSelectedMemberIds((prev) => {
-      const currentIds = members.map((member) => member.id)
+ useEffect(() => {
+  setSelectedMemberIds((prev) => {
+    const currentIds = members.map((member) => member.id)
 
-      if (prev.length === 0) {
-        return currentIds
-      }
-
-      const keptIds = prev.filter((id) => currentIds.includes(id))
-      const newIds = currentIds.filter((id) => !prev.includes(id))
-
-      return [...keptIds, ...newIds]
-    })
-  }, [members])
+    return prev.filter((id) => currentIds.includes(id))
+  })
+}, [members])
 
   const isMine = (member) => {
     return member.ownerId === deviceId || !member.ownerId
@@ -160,27 +154,24 @@ const getCommonTimes = () => {
     times.forEach((time) => {
       const timeKey = `${day} ${time}`
 
-      // 포함해야 하는 팀원 중 이 시간에 가능한 사람
-      const selectedAvailableMembers = selectedMembers.filter((member) =>
-        (member.availableTimes || []).includes(timeKey)
-      )
-
-      // 전체 팀원 중 이 시간에 가능한 사람
       const allAvailableMembers = members.filter((member) =>
         (member.availableTimes || []).includes(timeKey)
       )
 
-      // 조건 1: 포함해야 하는 팀원이 모두 가능해야 함
+      const selectedAvailableMembers = selectedMembers.filter((member) =>
+        (member.availableTimes || []).includes(timeKey)
+      )
+
+      const noSelectedMembers = selectedMembers.length === 0
+
       const allSelectedMembersAvailable =
         selectedAvailableMembers.length === selectedMembers.length
 
-      // 조건 2: 전체 가능한 인원이 최소 가능 인원 이상이어야 함
       const enoughPeople = allAvailableMembers.length >= minPeople
 
       if (
-        selectedMembers.length > 0 &&
-        allSelectedMembersAvailable &&
-        enoughPeople
+        enoughPeople &&
+        (noSelectedMembers || allSelectedMembersAvailable)
       ) {
         result.push({
           time: timeKey,
@@ -193,9 +184,15 @@ const getCommonTimes = () => {
   return result
 }
 
+const isCommonTime = (day, time) => {
+  const timeKey = `${day} ${time}`
+
+  return getCommonTimes().some((item) => item.time === timeKey)
+}
+
   return (
     <div className="container">
-      <h1>팀 일정 및 역할 관리</h1>
+      <h1>시간 & 역할 계획 프로그램</h1>
 
       <nav>
         <button onClick={() => setPage("main")}>메인 페이지</button>
@@ -205,7 +202,7 @@ const getCommonTimes = () => {
 
       {page === "main" && (
         <section>
-          <h2>공통 가능 시간</h2>
+          <h2> 시간 확인 </h2>
 
           <label>
             최소 가능 인원:
@@ -232,23 +229,77 @@ const getCommonTimes = () => {
             ))}
           </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>시간</th>
-                <th>가능한 팀원</th>
-              </tr>
-            </thead>
+          <div className="view-toggle-box">
+  <button
+    className={viewMode === "table" ? "active-view-button" : ""}
+    onClick={() => setViewMode("table")}
+  >
+    표
+  </button>
 
-            <tbody>
-              {getCommonTimes().map((item, index) => (
-                <tr key={index}>
-                  <td>{item.time}</td>
-                  <td>{item.members.join(", ")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  <button
+    className={viewMode === "image" ? "active-view-button" : ""}
+    onClick={() => setViewMode("image")}
+  >
+    시간표
+  </button>
+</div>
+
+{viewMode === "table" && (
+  <table>
+    <thead>
+      <tr>
+        <th>시간</th>
+        <th>가능한 팀원</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {getCommonTimes().map((item, index) => (
+        <tr key={index}>
+          <td>{item.time}</td>
+          <td>{item.members.join(", ")}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)}
+
+{viewMode === "image" && (
+  <table className="common-time-grid">
+    <thead>
+      <tr>
+        <th>시간</th>
+        {days.map((day) => (
+          <th key={day}>{day}</th>
+        ))}
+      </tr>
+    </thead>
+
+    <tbody>
+      {times.map((time) => (
+        <tr key={time}>
+          <td>{time}</td>
+
+          {days.map((day) => {
+            const common = isCommonTime(day, time)
+
+            return (
+              <td key={day}>
+                <div
+                  className={
+                    common ? "common-time-block" : "empty-time-block"
+                  }
+                />
+              </td>
+            )
+          })}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)}
+          
         </section>
       )}
 
