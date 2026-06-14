@@ -228,7 +228,7 @@ function App() {
                 <input
                   type="number"
                   value={minPeople}
-                  min="0"
+                  min="1"
                   onChange={(e) => {
                     const value = e.target.value
 
@@ -239,8 +239,8 @@ function App() {
                     }
                   }}
                   onBlur={() => {
-                    if (minPeople === "") {
-                      setMinPeople(0)
+                    if (minPeople === "" || Number(minPeople) < 1) {
+                      setMinPeople(1)
                     }
                   }}
                 />
