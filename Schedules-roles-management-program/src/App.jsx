@@ -165,7 +165,7 @@ function App() {
         const allSelectedMembersAvailable =
           selectedAvailableMembers.length === selectedMembers.length
 
-        const enoughPeople = allAvailableMembers.length >= minPeople
+        const enoughPeople = allAvailableMembers.length >= (Number(minPeople) || 1)
 
         if (enoughPeople && (noSelectedMembers || allSelectedMembersAvailable)) {
           result.push({
@@ -229,7 +229,15 @@ function App() {
                   type="number"
                   value={minPeople}
                   min="1"
-                  onChange={(e) => setMinPeople(Number(e.target.value))}
+                  onChange={(e) => {
+                    const value = e.target.value
+
+                    if (value === "") {
+                      setMinPeople("")
+                    } else {
+                      setMinPeople(Number(value))
+                    }
+                  }}
                 />
               </label>
             </div>
