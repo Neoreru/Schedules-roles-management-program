@@ -36,7 +36,7 @@ function getDeviceId() {
 function App() {
   const [page, setPage] = useState("main")
   const [members, setMembers] = useState([])
-  const [minPeople, setMinPeople] = useState(2)
+  const [minPeople, setMinPeople] = useState(1)
   const [selectedMemberIds, setSelectedMemberIds] = useState([])
   const [viewMode, setViewMode] = useState("table")
   const [deviceId] = useState(getDeviceId)
