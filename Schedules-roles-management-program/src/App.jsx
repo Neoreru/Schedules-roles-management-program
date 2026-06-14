@@ -192,12 +192,29 @@ const isCommonTime = (day, time) => {
 
   return (
     <div className="container">
-      <h1>시간 & 역할 계획 프로그램</h1>
+      <h1>팀플 시간, 역할 계획</h1>
 
       <nav>
-        <button onClick={() => setPage("main")}>메인 페이지</button>
-        <button onClick={() => setPage("team")}>시간 관리 페이지</button>
-        <button onClick={() => setPage("role")}>역할 관리 페이지</button>
+        <button
+          className={page === "main" ? "active-button" : "inactive-button"}
+          onClick={() => setPage("main")}
+        >
+          메인 페이지
+        </button>
+
+        <button
+          className={page === "team" ? "active-button" : "inactive-button"}
+          onClick={() => setPage("team")}
+        >
+          시간 관리 페이지
+        </button>
+
+        <button
+          className={page === "role" ? "active-button" : "inactive-button"}
+          onClick={() => setPage("role")}
+        >
+          역할 관리 페이지
+        </button>
       </nav>
 
       {page === "main" && (
@@ -230,10 +247,21 @@ const isCommonTime = (day, time) => {
           </div>
 
           <div className="view-toggle-box">
+<button
+  className={
+    viewMode === "table"
+      ? "active-button"
+      : "inactive-button"
+  }
+>
+
   <button
-    className={viewMode === "table" ? "active-view-button" : ""}
-    onClick={() => setViewMode("table")}
-  >
+  className={
+    viewMode === "image"
+      ? "active-button"
+      : "inactive-button"
+  }
+></button>
     표
   </button>
 

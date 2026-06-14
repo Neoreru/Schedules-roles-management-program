@@ -335,20 +335,22 @@ tr:hover td {
   margin: 24px 0;
 }
 
-.active-view-button {
-  background: #1f6feb;
-}
 
 .common-time-grid td {
   text-align: center;
 }
 
+.common-time-grid td {
+  padding: 0;
+  height: 70px;
+}
+
 .common-time-block,
 .empty-time-block {
-  width: 90%;
-  height: 32px;
-  margin: 0 auto;
-  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
 }
 
 .common-time-block {
@@ -358,4 +360,18 @@ tr:hover td {
 .empty-time-block {
   background: #f5f6fa;
   border: 1px solid #e1e4ec;
+}
+
+
+
+.active-button {
+  background: #4f6ef7;
+  color: white;
+  border: none;
+}
+
+.inactive-button {
+  background: #e5e7eb;
+  color: #444;
+  border: none;
 }
