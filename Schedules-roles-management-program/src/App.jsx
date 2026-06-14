@@ -16,22 +16,10 @@ import "./App.css"
 const days = ["월", "화", "수", "목", "금", "토", "일"]
 
 const times = [
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:00",
-  "19:00",
-  "20:00",
-  "21:00",
-  "22:00",
-  "23:00",
-  "00:00",
+  "09:00", "10:00", "11:00", "12:00",
+  "13:00", "14:00", "15:00", "16:00",
+  "17:00", "18:00", "19:00", "20:00",
+  "21:00", "22:00", "23:00", "00:00",
 ]
 
 function getDeviceId() {
@@ -49,7 +37,9 @@ function App() {
   const [page, setPage] = useState("main")
   const [members, setMembers] = useState([])
   const [minPeople, setMinPeople] = useState(2)
+  const [selectedMemberIds, setSelectedMemberIds] = useState([])
   const [deviceId] = useState(getDeviceId)
+
   const [editingNameId, setEditingNameId] = useState(null)
   const [editingName, setEditingName] = useState("")
   const [editingRoleId, setEditingRoleId] = useState(null)
@@ -71,6 +61,21 @@ function App() {
     return () => unsubscribe()
   }, [])
 
+  useEffect(() => {
+    setSelectedMemberIds((prev) => {
+      const currentIds = members.map((member) => member.id)
+
+      if (prev.length === 0) {
+        return currentIds
+      }
+
+      const keptIds = prev.filter((id) => currentIds.includes(id))
+      const newIds = currentIds.filter((id) => !prev.includes(id))
+
+      return [...keptIds, ...newIds]
+    })
+  }, [members])
+
   const isMine = (member) => {
     return member.ownerId === deviceId || !member.ownerId
   }
@@ -87,6 +92,10 @@ function App() {
     return 0
   })
 
+  const selectedMembers = members.filter((member) =>
+    selectedMemberIds.includes(member.id)
+  )
+
   const addMember = async () => {
     await addDoc(collection(db, "members"), {
       name: "이름 없음",
@@ -100,13 +109,11 @@ function App() {
 
   const deleteMember = async (member) => {
     if (!isMine(member)) return
-
     await deleteDoc(doc(db, "members", member.id))
   }
 
   const updateMemberName = async (member, newName) => {
     if (!isMine(member)) return
-
     await updateDoc(doc(db, "members", member.id), {
       name: newName,
     })
@@ -130,18 +137,20 @@ function App() {
 
   const updateRole = async (member, role) => {
     if (!isMine(member)) return
-
-    await updateDoc(doc(db, "members", member.id), {
-      role,
-    })
+    await updateDoc(doc(db, "members", member.id), { role })
   }
 
   const updateMemo = async (member, memo) => {
     if (!isMine(member)) return
+    await updateDoc(doc(db, "members", member.id), { memo })
+  }
 
-    await updateDoc(doc(db, "members", member.id), {
-      memo,
-    })
+  const toggleSelectedMember = (memberId) => {
+    setSelectedMemberIds((prev) =>
+      prev.includes(memberId)
+        ? prev.filter((id) => id !== memberId)
+        : [...prev, memberId]
+    )
   }
 
   const getCommonTimes = () => {
@@ -151,7 +160,7 @@ function App() {
       times.forEach((time) => {
         const timeKey = `${day} ${time}`
 
-        const availableMembers = members.filter((member) =>
+        const availableMembers = selectedMembers.filter((member) =>
           (member.availableTimes || []).includes(timeKey)
         )
 
@@ -173,7 +182,7 @@ function App() {
 
       <nav>
         <button onClick={() => setPage("main")}>메인 페이지</button>
-        <button onClick={() => setPage("team")}>팀 관리 페이지</button>
+        <button onClick={() => setPage("team")}>시간 관리 페이지</button>
         <button onClick={() => setPage("role")}>역할 관리 페이지</button>
       </nav>
 
@@ -190,6 +199,21 @@ function App() {
               onChange={(e) => setMinPeople(Number(e.target.value))}
             />
           </label>
+
+          <div className="member-filter-box">
+            <h3>분석에 포함할 팀원</h3>
+
+            {members.map((member) => (
+              <label key={member.id} className="member-checkbox">
+                <input
+                  type="checkbox"
+                  checked={selectedMemberIds.includes(member.id)}
+                  onChange={() => toggleSelectedMember(member.id)}
+                />
+                {member.name}
+              </label>
+            ))}
+          </div>
 
           <table>
             <thead>
@@ -213,7 +237,7 @@ function App() {
 
       {page === "team" && (
         <section>
-          <h2>팀원 정보 관리</h2>
+          <h2>시간표 관리</h2>
 
           {!hasMyMember && (
             <div className="add-member-box">
@@ -309,14 +333,6 @@ function App() {
                     ))}
                   </tbody>
                 </table>
-
-                <h3>선택된 가능 시간</h3>
-
-                <p>
-                  {(member.availableTimes || []).length > 0
-                    ? member.availableTimes.join(", ")
-                    : "선택된 시간이 없습니다."}
-                </p>
               </div>
             )
           })}
