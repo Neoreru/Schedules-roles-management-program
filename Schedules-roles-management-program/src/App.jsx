@@ -213,19 +213,27 @@ function App() {
 
       {page === "main" && (
         <section>
+          {!hasMyMember && (
+            <div className="add-member-box">
+              <button onClick={addMember}>내 정보 추가</button>
+            </div>
+          )}
+
           <h2>시간 확인</h2>
 
-          <label>
-            최소 가능 인원:
-            <input
-              type="number"
-              value={minPeople}
-              min="1"
-              onChange={(e) => setMinPeople(Number(e.target.value))}
-            />
-          </label>
-
           <div className="member-filter-box">
+            <div className="min-people-box">
+              <label>
+                최소 가능 인원:
+                <input
+                  type="number"
+                  value={minPeople}
+                  min="1"
+                  onChange={(e) => setMinPeople(Number(e.target.value))}
+                />
+              </label>
+            </div>
+
             <h3>포함해야하는 팀원</h3>
 
             {members.map((member) => (
@@ -314,11 +322,6 @@ function App() {
         <section>
           <h2>시간표 관리</h2>
 
-          {!hasMyMember && (
-            <div className="add-member-box">
-              <button onClick={addMember}>내 정보 추가</button>
-            </div>
-          )}
 
           {sortedMembers.map((member) => {
             const mine = isMine(member)

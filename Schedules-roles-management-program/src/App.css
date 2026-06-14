@@ -355,3 +355,8 @@ section {
 table {
   min-width: 720px;
 }
+
+
+.min-people-box {
+  margin-bottom: 24px;
+}
