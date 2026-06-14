@@ -207,7 +207,7 @@ const getCommonTimes = () => {
           </label>
 
           <div className="member-filter-box">
-            <h3>팀원 선택</h3>
+            <h3>포함해야하는 팀원</h3>
 
             {members.map((member) => (
               <label key={member.id} className="member-checkbox">
