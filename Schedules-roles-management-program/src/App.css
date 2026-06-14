@@ -298,3 +298,30 @@ tr:hover td {
   min-height: 90px;
   resize: vertical;
 }
+
+
+
+
+
+.time-cell {
+  cursor: pointer;
+  background: white;
+  transition: 0.2s;
+}
+
+.time-cell:hover {
+  background: #eef3ff;
+}
+
+.time-cell.selected {
+  background: #4f6ef7;
+}
+
+.time-cell.readonly {
+  cursor: not-allowed;
+  background: #f3f3f3;
+}
+
+.time-cell.readonly.selected {
+  background: #aeb9f5;
+}

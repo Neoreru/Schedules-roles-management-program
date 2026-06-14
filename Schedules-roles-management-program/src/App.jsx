@@ -160,17 +160,28 @@ const getCommonTimes = () => {
     times.forEach((time) => {
       const timeKey = `${day} ${time}`
 
-      // 체크된 학생들 중 이 시간에 가능한 사람
+      // 포함해야 하는 팀원 중 이 시간에 가능한 사람
       const selectedAvailableMembers = selectedMembers.filter((member) =>
         (member.availableTimes || []).includes(timeKey)
       )
 
-      // 전체 학생들 중 이 시간에 가능한 사람
+      // 전체 팀원 중 이 시간에 가능한 사람
       const allAvailableMembers = members.filter((member) =>
         (member.availableTimes || []).includes(timeKey)
       )
 
-      if (selectedAvailableMembers.length >= minPeople) {
+      // 조건 1: 포함해야 하는 팀원이 모두 가능해야 함
+      const allSelectedMembersAvailable =
+        selectedAvailableMembers.length === selectedMembers.length
+
+      // 조건 2: 전체 가능한 인원이 최소 가능 인원 이상이어야 함
+      const enoughPeople = allAvailableMembers.length >= minPeople
+
+      if (
+        selectedMembers.length > 0 &&
+        allSelectedMembersAvailable &&
+        enoughPeople
+      ) {
         result.push({
           time: timeKey,
           members: allAvailableMembers.map((member) => member.name),
@@ -325,13 +336,15 @@ const getCommonTimes = () => {
                           )
 
                           return (
-                            <td key={day}>
-                              <input
-                                type="checkbox"
-                                checked={checked}
-                                disabled={!mine}
-                                onChange={() => toggleTime(member, day, time)}
-                              />
+                            <td
+                              key={day}
+                              className={`time-cell ${checked ? "selected" : ""} ${
+                                !mine ? "readonly" : ""
+                              }`}
+                              onClick={() => {
+                                if (mine) toggleTime(member, day, time)
+                              }}
+                            >
                             </td>
                           )
                         })}
