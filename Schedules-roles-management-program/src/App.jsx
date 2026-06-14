@@ -153,32 +153,34 @@ function App() {
     )
   }
 
-  const getCommonTimes = () => {
-    const result = []
+const getCommonTimes = () => {
+  const result = []
 
-    days.forEach((day) => {
-      times.forEach((time) => {
-        const timeKey = `${day} ${time}`
+  days.forEach((day) => {
+    times.forEach((time) => {
+      const timeKey = `${day} ${time}`
 
-        const availableMembers = selectedMembers.filter((member) =>
-          (member.availableTimes || []).includes(timeKey)
-        )
+      // 체크된 학생들 중 이 시간에 가능한 사람
+      const selectedAvailableMembers = selectedMembers.filter((member) =>
+        (member.availableTimes || []).includes(timeKey)
+      )
 
-        const availableMembers = selectedMembers.filter((member) =>
-          (member.availableTimes || []).includes(timeKey)
-        )
+      // 전체 학생들 중 이 시간에 가능한 사람
+      const allAvailableMembers = members.filter((member) =>
+        (member.availableTimes || []).includes(timeKey)
+      )
 
-        if (availableMembers.length >= minPeople) {
-          result.push({
-            time: timeKey,
-            members: availableMembers.map((member) => member.name),
-          })
-        }
-      })
+      if (selectedAvailableMembers.length >= minPeople) {
+        result.push({
+          time: timeKey,
+          members: allAvailableMembers.map((member) => member.name),
+        })
+      }
     })
+  })
 
-    return result
-  }
+  return result
+}
 
   return (
     <div className="container">
