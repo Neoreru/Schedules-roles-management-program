@@ -1,149 +1,7 @@
-.container {
-  max-width: 1000px;
-  margin: 30px auto;
-  font-family: Arial, sans-serif;
-}
-
-input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
-
-nav {
-  margin-bottom: 20px;
-}
-
-button {
-  margin: 5px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-input,
-textarea {
-  margin: 5px;
-  padding: 8px;
-}
-
-textarea {
-  display: block;
-  width: 300px;
-  height: 80px;
-}
-
-.card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-top: 20px;
-  border-radius: 8px;
-}
-
-table {
-  border-collapse: collapse;
-  table-layout: fixed;
-  width: 100%;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  width: 70px;
-  height: 40px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-
-
-
-.add-member-box {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-.name-edit-box,
-.name-view-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 15px;
-  font-size: 22px;
-}
-
-.name-input {
-  width: 240px;
-  padding: 10px;
-  font-size: 18px;
-  text-align: center;
-}
-
-.readonly-text {
-  text-align: center;
-  color: #777;
-  font-size: 15px;
-}
-
-.role-input-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  margin-top: 15px;
-}
-
-.role-input {
-  width: 320px;
-  padding: 12px;
-  font-size: 18px;
-  text-align: center;
-}
-
-.memo-input {
-  width: 460px;
-  height: 150px;
-  padding: 12px;
-  font-size: 18px;
-  resize: vertical;
-}
-
-
-
-.role-view-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 15px;
-  font-size: 18px;
-}
-
-.role-text,
-.memo-text {
-  margin: 4px 0;
-  text-align: center;
-}
-
-.memo-text {
-  max-width: 500px;
-  white-space: pre-wrap;
-}
-
-
-
 body {
   margin: 0;
   background: #f4f6fb;
-  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
   color: #2f3140;
 }
 
@@ -185,20 +43,41 @@ nav {
 
 button {
   border: none;
-  border-radius: 12px;
-  padding: 12px 18px;
-  background: #4f6ef7;
-  color: white;
-  font-size: 15px;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-size: 16px;
   cursor: pointer;
+  margin: 5px;
 }
 
-button:hover {
-  background: #3f5de0;
+.active-button {
+  background: #4f6ef7;
+  color: white;
+}
+
+.inactive-button {
+  background: #e5e7eb;
+  color: #444;
+}
+
+.active-button:hover {
+  background: #4f6ef7;
+  color: white;
+}
+
+.inactive-button:hover {
+  background: #e5e7eb;
+  color: #444;
 }
 
 label {
   font-size: 18px;
+}
+
+input,
+textarea {
+  margin: 5px;
+  padding: 8px;
 }
 
 input[type="number"],
@@ -209,11 +88,22 @@ input[type="number"],
   border-radius: 10px;
   padding: 12px;
   font-size: 16px;
-  margin-left: 8px;
 }
 
 input[type="number"] {
   width: 160px;
+  margin-left: 8px;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+textarea {
+  display: block;
+  resize: vertical;
 }
 
 .member-filter-box {
@@ -242,9 +132,17 @@ input[type="number"] {
   height: 18px;
 }
 
+.view-toggle-box {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 24px 0;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   margin-top: 24px;
   overflow: hidden;
   border-radius: 16px;
@@ -256,29 +154,37 @@ th {
   color: #4b5068;
   font-size: 18px;
   padding: 18px;
+  border: 1px solid #ddd;
+  text-align: center;
 }
 
 td {
+  height: 40px;
   padding: 18px;
+  border: 1px solid #ddd;
   border-bottom: 1px solid #edf0f5;
   font-size: 17px;
-}
-
-tr:hover td {
-  background: #fafbff;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .card {
   margin: 28px auto;
   padding: 28px;
-  background: #ffffff;
+  background: white;
   border: 1px solid #e2e5ef;
   border-radius: 20px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-.name-view-box,
+.add-member-box {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
 .name-edit-box,
+.name-view-box,
 .role-input-box,
 .role-view-box {
   display: flex;
@@ -289,31 +195,72 @@ tr:hover td {
   margin-bottom: 18px;
 }
 
+.name-view-box,
+.name-edit-box {
+  font-size: 22px;
+}
+
+.name-input {
+  width: 240px;
+  text-align: center;
+}
+
 .readonly-text {
+  text-align: center;
   color: #888;
+  font-size: 15px;
+}
+
+.role-input-box {
+  flex-direction: column;
+  margin-top: 15px;
+}
+
+.role-input {
+  width: 320px;
+  text-align: center;
 }
 
 .memo-input {
   width: 70%;
   min-height: 90px;
-  resize: vertical;
+  height: 150px;
+  font-size: 18px;
 }
 
+.role-view-box {
+  flex-direction: column;
+  margin-top: 15px;
+  font-size: 18px;
+}
 
+.role-text,
+.memo-text {
+  margin: 4px 0;
+  text-align: center;
+}
 
+.memo-text {
+  max-width: 500px;
+  white-space: pre-wrap;
+}
 
-
+/* 시간 관리 페이지: 칸 클릭 방식 */
 .time-cell {
   cursor: pointer;
   background: white;
-  transition: 0.2s;
+  transition: none;
 }
 
 .time-cell:hover {
-  background: #eef3ff;
+  background: white;
 }
 
 .time-cell.selected {
+  background: #4f6ef7;
+}
+
+.time-cell.selected:hover {
   background: #4f6ef7;
 }
 
@@ -322,35 +269,22 @@ tr:hover td {
   background: #f3f3f3;
 }
 
+.time-cell.readonly:hover {
+  background: #f3f3f3;
+}
+
 .time-cell.readonly.selected {
   background: #aeb9f5;
 }
 
-
-
-.view-toggle-box {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 24px 0;
+.time-cell.readonly.selected:hover {
+  background: #aeb9f5;
 }
 
-
-.common-time-grid td {
-  text-align: center;
-}
-
+/* 메인 페이지 시간표 보기 */
 .common-time-grid td {
   padding: 0;
   height: 70px;
-}
-
-.common-time-block,
-.empty-time-block {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  border-radius: 0;
 }
 
 .common-time-block {
@@ -359,19 +293,12 @@ tr:hover td {
 
 .empty-time-block {
   background: #f5f6fa;
-  border: 1px solid #e1e4ec;
 }
 
-
-
-.active-button {
-  background: #4f6ef7;
-  color: white;
-  border: none;
-}
-
-.inactive-button {
-  background: #e5e7eb;
-  color: #444;
-  border: none;
+.common-time-block,
+.empty-time-block {
+  width: 100%;
+  height: 70px;
+  margin: 0;
+  border-radius: 0;
 }

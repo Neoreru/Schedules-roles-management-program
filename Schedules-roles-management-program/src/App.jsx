@@ -38,6 +38,7 @@ function App() {
   const [members, setMembers] = useState([])
   const [minPeople, setMinPeople] = useState(2)
   const [selectedMemberIds, setSelectedMemberIds] = useState([])
+  const [viewMode, setViewMode] = useState("table")
   const [deviceId] = useState(getDeviceId)
 
   const [editingNameId, setEditingNameId] = useState(null)
@@ -45,7 +46,6 @@ function App() {
   const [editingRoleId, setEditingRoleId] = useState(null)
   const [editingRole, setEditingRole] = useState("")
   const [editingMemo, setEditingMemo] = useState("")
-  const [viewMode, setViewMode] = useState("table")
 
   useEffect(() => {
     const q = query(collection(db, "members"), orderBy("createdAt", "asc"))
@@ -62,13 +62,12 @@ function App() {
     return () => unsubscribe()
   }, [])
 
- useEffect(() => {
-  setSelectedMemberIds((prev) => {
-    const currentIds = members.map((member) => member.id)
-
-    return prev.filter((id) => currentIds.includes(id))
-  })
-}, [members])
+  useEffect(() => {
+    setSelectedMemberIds((prev) => {
+      const currentIds = members.map((member) => member.id)
+      return prev.filter((id) => currentIds.includes(id))
+    })
+  }, [members])
 
   const isMine = (member) => {
     return member.ownerId === deviceId || !member.ownerId
@@ -147,48 +146,43 @@ function App() {
     )
   }
 
-const getCommonTimes = () => {
-  const result = []
+  const getCommonTimes = () => {
+    const result = []
 
-  days.forEach((day) => {
-    times.forEach((time) => {
-      const timeKey = `${day} ${time}`
+    days.forEach((day) => {
+      times.forEach((time) => {
+        const timeKey = `${day} ${time}`
 
-      const allAvailableMembers = members.filter((member) =>
-        (member.availableTimes || []).includes(timeKey)
-      )
+        const allAvailableMembers = members.filter((member) =>
+          (member.availableTimes || []).includes(timeKey)
+        )
 
-      const selectedAvailableMembers = selectedMembers.filter((member) =>
-        (member.availableTimes || []).includes(timeKey)
-      )
+        const selectedAvailableMembers = selectedMembers.filter((member) =>
+          (member.availableTimes || []).includes(timeKey)
+        )
 
-      const noSelectedMembers = selectedMembers.length === 0
+        const noSelectedMembers = selectedMembers.length === 0
+        const allSelectedMembersAvailable =
+          selectedAvailableMembers.length === selectedMembers.length
 
-      const allSelectedMembersAvailable =
-        selectedAvailableMembers.length === selectedMembers.length
+        const enoughPeople = allAvailableMembers.length >= minPeople
 
-      const enoughPeople = allAvailableMembers.length >= minPeople
-
-      if (
-        enoughPeople &&
-        (noSelectedMembers || allSelectedMembersAvailable)
-      ) {
-        result.push({
-          time: timeKey,
-          members: allAvailableMembers.map((member) => member.name),
-        })
-      }
+        if (enoughPeople && (noSelectedMembers || allSelectedMembersAvailable)) {
+          result.push({
+            time: timeKey,
+            members: allAvailableMembers.map((member) => member.name),
+          })
+        }
+      })
     })
-  })
 
-  return result
-}
+    return result
+  }
 
-const isCommonTime = (day, time) => {
-  const timeKey = `${day} ${time}`
-
-  return getCommonTimes().some((item) => item.time === timeKey)
-}
+  const isCommonTime = (day, time) => {
+    const timeKey = `${day} ${time}`
+    return getCommonTimes().some((item) => item.time === timeKey)
+  }
 
   return (
     <div className="container">
@@ -219,7 +213,7 @@ const isCommonTime = (day, time) => {
 
       {page === "main" && (
         <section>
-          <h2> 시간 확인 </h2>
+          <h2>시간 확인</h2>
 
           <label>
             최소 가능 인원:
@@ -247,87 +241,72 @@ const isCommonTime = (day, time) => {
           </div>
 
           <div className="view-toggle-box">
-<button
-  className={
-    viewMode === "table"
-      ? "active-button"
-      : "inactive-button"
-  }
->
+            <button
+              className={viewMode === "table" ? "active-button" : "inactive-button"}
+              onClick={() => setViewMode("table")}
+            >
+              표
+            </button>
 
-  <button
-  className={
-    viewMode === "image"
-      ? "active-button"
-      : "inactive-button"
-  }
-></button>
-    표
-  </button>
+            <button
+              className={viewMode === "image" ? "active-button" : "inactive-button"}
+              onClick={() => setViewMode("image")}
+            >
+              시간표
+            </button>
+          </div>
 
-  <button
-    className={viewMode === "image" ? "active-view-button" : ""}
-    onClick={() => setViewMode("image")}
-  >
-    시간표
-  </button>
-</div>
+          {viewMode === "table" && (
+            <table>
+              <thead>
+                <tr>
+                  <th>시간</th>
+                  <th>가능한 팀원</th>
+                </tr>
+              </thead>
 
-{viewMode === "table" && (
-  <table>
-    <thead>
-      <tr>
-        <th>시간</th>
-        <th>가능한 팀원</th>
-      </tr>
-    </thead>
+              <tbody>
+                {getCommonTimes().map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.time}</td>
+                    <td>{item.members.join(", ")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
 
-    <tbody>
-      {getCommonTimes().map((item, index) => (
-        <tr key={index}>
-          <td>{item.time}</td>
-          <td>{item.members.join(", ")}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-)}
+          {viewMode === "image" && (
+            <table className="common-time-grid">
+              <thead>
+                <tr>
+                  <th>시간</th>
+                  {days.map((day) => (
+                    <th key={day}>{day}</th>
+                  ))}
+                </tr>
+              </thead>
 
-{viewMode === "image" && (
-  <table className="common-time-grid">
-    <thead>
-      <tr>
-        <th>시간</th>
-        {days.map((day) => (
-          <th key={day}>{day}</th>
-        ))}
-      </tr>
-    </thead>
+              <tbody>
+                {times.map((time) => (
+                  <tr key={time}>
+                    <td>{time}</td>
 
-    <tbody>
-      {times.map((time) => (
-        <tr key={time}>
-          <td>{time}</td>
+                    {days.map((day) => {
+                      const common = isCommonTime(day, time)
 
-          {days.map((day) => {
-            const common = isCommonTime(day, time)
-
-            return (
-              <td key={day}>
-                <div
-                  className={
-                    common ? "common-time-block" : "empty-time-block"
-                  }
-                />
-              </td>
-            )
-          })}
-        </tr>
-      ))}
-    </tbody>
-  </table>
-)}
-          
+                      return (
+                        <td
+                          key={day}
+                          className={common ? "common-time-block" : "empty-time-block"}
+                        ></td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </section>
       )}
 
@@ -410,9 +389,7 @@ const isCommonTime = (day, time) => {
 
                         {days.map((day) => {
                           const timeKey = `${day} ${time}`
-                          const checked = (member.availableTimes || []).includes(
-                            timeKey
-                          )
+                          const checked = (member.availableTimes || []).includes(timeKey)
 
                           return (
                             <td
@@ -423,8 +400,7 @@ const isCommonTime = (day, time) => {
                               onClick={() => {
                                 if (mine) toggleTime(member, day, time)
                               }}
-                            >
-                            </td>
+                            ></td>
                           )
                         })}
                       </tr>
