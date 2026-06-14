@@ -302,3 +302,56 @@ td {
   margin: 0;
   border-radius: 0;
 }
+
+
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    margin: 0;
+    padding: 20px 12px;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    font-size: 34px;
+  }
+
+  nav,
+  .view-toggle-box {
+    flex-wrap: wrap;
+  }
+
+  table {
+    min-width: 720px;
+  }
+
+  section {
+    overflow-x: auto;
+  }
+
+  .member-filter-box {
+    max-width: 100%;
+  }
+
+  .member-checkbox {
+    font-size: 15px;
+    padding: 8px 12px;
+  }
+
+  input[type="number"] {
+    width: 120px;
+  }
+
+  .memo-input {
+    width: 90%;
+  }
+}
+
+section {
+  overflow-x: auto;
+}
+
+table {
+  min-width: 720px;
+}
