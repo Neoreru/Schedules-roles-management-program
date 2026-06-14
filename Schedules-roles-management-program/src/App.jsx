@@ -224,11 +224,11 @@ function App() {
           <div className="member-filter-box">
             <div className="min-people-box">
               <label>
-                최소 가능 인원:
+                최소 인원:
                 <input
                   type="number"
                   value={minPeople}
-                  min="1"
+                  min="0"
                   onChange={(e) => {
                     const value = e.target.value
 
@@ -236,6 +236,11 @@ function App() {
                       setMinPeople("")
                     } else {
                       setMinPeople(Number(value))
+                    }
+                  }}
+                  onBlur={() => {
+                    if (minPeople === "") {
+                      setMinPeople(0)
                     }
                   }}
                 />
