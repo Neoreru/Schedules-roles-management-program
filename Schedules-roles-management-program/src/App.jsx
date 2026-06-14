@@ -164,6 +164,10 @@ function App() {
           (member.availableTimes || []).includes(timeKey)
         )
 
+        const availableMembers = selectedMembers.filter((member) =>
+          (member.availableTimes || []).includes(timeKey)
+        )
+
         if (availableMembers.length >= minPeople) {
           result.push({
             time: timeKey,
@@ -201,7 +205,7 @@ function App() {
           </label>
 
           <div className="member-filter-box">
-            <h3>분석에 포함할 팀원</h3>
+            <h3>팀원 선택</h3>
 
             {members.map((member) => (
               <label key={member.id} className="member-checkbox">
