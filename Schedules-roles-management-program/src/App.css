@@ -397,8 +397,8 @@ table {
 }
 
 .room-list-button {
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
   cursor: pointer;
 }
