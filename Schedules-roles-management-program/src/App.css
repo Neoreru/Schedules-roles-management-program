@@ -538,3 +538,12 @@ table {
   border-radius: 16px;
   cursor: pointer;
 }
+
+
+
+.center-card {
+  max-width: 760px;
+  margin: 120px auto 0;
+  padding: 48px;
+  text-align: center;
+}

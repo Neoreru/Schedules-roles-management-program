@@ -353,7 +353,7 @@ function App() {
       <div className="container">
 
         {roomMode === "start" && (
-          <section className="start-card">
+          <section className="start-card center-card">
             <div className="start-badge">TEAM SCHEDULER</div>
 
             <h1 className="start-title">
@@ -384,7 +384,7 @@ function App() {
         )}
 
         {roomMode === "createName" && (
-          <section>
+          <section className="center-card">
             <h2>방 정보 입력</h2>
 
             <input
@@ -417,7 +417,7 @@ function App() {
         )}
 
         {roomMode === "join" && (
-          <section>
+          <section className="center-card">
             <h2>방 입장</h2>
 
             <input
@@ -441,7 +441,7 @@ function App() {
         )}
 
         {roomMode === "joinName" && (
-          <section>
+          <section className="center-card">
             <h2>이름 입력</h2>
             <p>입장할 방 코드: {roomCode}</p>
 
