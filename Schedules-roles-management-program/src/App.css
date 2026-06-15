@@ -360,3 +360,18 @@ table {
 .min-people-box {
   margin-bottom: 24px;
 }
+
+
+
+.room-code-box {
+  text-align: right;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.start-page,
+.add-member-box {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}

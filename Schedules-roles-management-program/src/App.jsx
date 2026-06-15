@@ -2,12 +2,13 @@ import { useEffect, useState } from "react"
 import {
   collection,
   addDoc,
-  deleteDoc,
   doc,
   updateDoc,
   onSnapshot,
   query,
   orderBy,
+  setDoc,
+  getDoc,
 } from "firebase/firestore"
 
 import { db } from "./firebase"
@@ -33,8 +34,36 @@ function getDeviceId() {
   return deviceId
 }
 
+function getSavedRooms() {
+  return JSON.parse(localStorage.getItem("joinedRooms") || "[]")
+}
+
+function saveJoinedRoom(roomCode) {
+  const savedRooms = getSavedRooms()
+  const alreadyExists = savedRooms.some((room) => room.code === roomCode)
+
+  if (alreadyExists) return
+
+  const newRooms = [
+    ...savedRooms,
+    {
+      code: roomCode,
+      joinedAt: Date.now(),
+    },
+  ]
+
+  localStorage.setItem("joinedRooms", JSON.stringify(newRooms))
+}
+
 function App() {
   const [page, setPage] = useState("main")
+  const [roomMode, setRoomMode] = useState("start")
+  const [roomCode, setRoomCode] = useState("")
+  const [joinCode, setJoinCode] = useState("")
+  const [userName, setUserName] = useState("")
+  const [isJoined, setIsJoined] = useState(false)
+  const [savedRooms, setSavedRooms] = useState(getSavedRooms)
+
   const [members, setMembers] = useState([])
   const [minPeople, setMinPeople] = useState(1)
   const [selectedMemberIds, setSelectedMemberIds] = useState([])
@@ -48,7 +77,12 @@ function App() {
   const [editingMemo, setEditingMemo] = useState("")
 
   useEffect(() => {
-    const q = query(collection(db, "members"), orderBy("createdAt", "asc"))
+    if (!isJoined || !roomCode) return
+
+    const q = query(
+      collection(db, "rooms", roomCode, "members"),
+      orderBy("createdAt", "asc")
+    )
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const memberList = snapshot.docs.map((doc) => ({
@@ -60,7 +94,7 @@ function App() {
     })
 
     return () => unsubscribe()
-  }, [])
+  }, [isJoined, roomCode])
 
   useEffect(() => {
     setSelectedMemberIds((prev) => {
@@ -69,12 +103,92 @@ function App() {
     })
   }, [members])
 
-  const isMine = (member) => {
-    return member.ownerId === deviceId || !member.ownerId
+  const generateRoomCode = () => {
+    return Math.random().toString(36).substring(2, 8).toUpperCase()
   }
 
-  const myMembers = members.filter((member) => isMine(member))
-  const hasMyMember = myMembers.length > 0
+  const createRoom = async () => {
+    let code = generateRoomCode()
+    let roomRef = doc(db, "rooms", code)
+    let roomSnap = await getDoc(roomRef)
+
+    while (roomSnap.exists()) {
+      code = generateRoomCode()
+      roomRef = doc(db, "rooms", code)
+      roomSnap = await getDoc(roomRef)
+    }
+
+    await setDoc(roomRef, {
+      ownerId: deviceId,
+      createdAt: Date.now(),
+    })
+
+    setRoomCode(code)
+    setRoomMode("createName")
+  }
+
+  const joinRoom = async () => {
+    const code = joinCode.trim().toUpperCase()
+
+    if (!code) {
+      alert("방 코드를 입력해주세요.")
+      return
+    }
+
+    const roomRef = doc(db, "rooms", code)
+    const roomSnap = await getDoc(roomRef)
+
+    if (!roomSnap.exists()) {
+      alert("존재하지 않는 방입니다.")
+      return
+    }
+
+    setRoomCode(code)
+    setRoomMode("joinName")
+  }
+
+  const enterRoomWithName = async () => {
+    const name = userName.trim()
+
+    if (!name) {
+      alert("이름을 입력해주세요.")
+      return
+    }
+
+    await addDoc(collection(db, "rooms", roomCode, "members"), {
+      name,
+      availableTimes: [],
+      role: "",
+      memo: "",
+      ownerId: deviceId,
+      createdAt: Date.now(),
+    })
+
+    saveJoinedRoom(roomCode)
+    setSavedRooms(getSavedRooms())
+    setIsJoined(true)
+    setPage("main")
+    setRoomMode("start")
+    setUserName("")
+  }
+
+  const enterSavedRoom = async (code) => {
+    const roomRef = doc(db, "rooms", code)
+    const roomSnap = await getDoc(roomRef)
+
+    if (!roomSnap.exists()) {
+      alert("존재하지 않는 방입니다.")
+      return
+    }
+
+    setRoomCode(code)
+    setIsJoined(true)
+    setPage("main")
+  }
+
+  const isMine = (member) => {
+    return member.ownerId === deviceId
+  }
 
   const sortedMembers = [...members].sort((a, b) => {
     const aMine = isMine(a)
@@ -89,25 +203,14 @@ function App() {
     selectedMemberIds.includes(member.id)
   )
 
-  const addMember = async () => {
-    await addDoc(collection(db, "members"), {
-      name: "이름 없음",
-      availableTimes: [],
-      role: "",
-      memo: "",
-      ownerId: deviceId,
-      createdAt: Date.now(),
-    })
-  }
-
-  const deleteMember = async (member) => {
-    if (!isMine(member)) return
-    await deleteDoc(doc(db, "members", member.id))
+  const memberDoc = (memberId) => {
+    return doc(db, "rooms", roomCode, "members", memberId)
   }
 
   const updateMemberName = async (member, newName) => {
     if (!isMine(member)) return
-    await updateDoc(doc(db, "members", member.id), {
+
+    await updateDoc(memberDoc(member.id), {
       name: newName,
     })
   }
@@ -123,19 +226,19 @@ function App() {
       ? availableTimes.filter((t) => t !== timeKey)
       : [...availableTimes, timeKey]
 
-    await updateDoc(doc(db, "members", member.id), {
+    await updateDoc(memberDoc(member.id), {
       availableTimes: newAvailableTimes,
     })
   }
 
   const updateRole = async (member, role) => {
     if (!isMine(member)) return
-    await updateDoc(doc(db, "members", member.id), { role })
+    await updateDoc(memberDoc(member.id), { role })
   }
 
   const updateMemo = async (member, memo) => {
     if (!isMine(member)) return
-    await updateDoc(doc(db, "members", member.id), { memo })
+    await updateDoc(memberDoc(member.id), { memo })
   }
 
   const toggleSelectedMember = (memberId) => {
@@ -184,9 +287,106 @@ function App() {
     return getCommonTimes().some((item) => item.time === timeKey)
   }
 
+  if (!isJoined) {
+    return (
+      <div className="container">
+        <h1>팀플 시간, 역할 계획</h1>
+
+        {roomMode === "start" && (
+          <section>
+            <h2>시작하기</h2>
+
+            <div className="add-member-box">
+              <button onClick={createRoom}>방 생성</button>
+              <button onClick={() => setRoomMode("join")}>방 입장</button>
+              <button onClick={() => setRoomMode("savedRooms")}>
+                기존 방 들어가기
+              </button>
+            </div>
+          </section>
+        )}
+
+        {roomMode === "createName" && (
+          <section>
+            <h2>이름 입력</h2>
+            <p>생성된 방 코드: {roomCode}</p>
+
+            <input
+              className="name-input"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="내 이름 입력"
+            />
+
+            <button onClick={enterRoomWithName}>방 입장</button>
+            <button onClick={() => setRoomMode("start")}>뒤로가기</button>
+          </section>
+        )}
+
+        {roomMode === "join" && (
+          <section>
+            <h2>방 입장</h2>
+
+            <input
+              className="name-input"
+              value={joinCode}
+              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+              placeholder="방 코드 입력"
+            />
+
+            <button onClick={joinRoom}>확인</button>
+            <button onClick={() => setRoomMode("start")}>뒤로가기</button>
+          </section>
+        )}
+
+        {roomMode === "joinName" && (
+          <section>
+            <h2>이름 입력</h2>
+            <p>입장할 방 코드: {roomCode}</p>
+
+            <input
+              className="name-input"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="내 이름 입력"
+            />
+
+            <button onClick={enterRoomWithName}>방 입장</button>
+            <button onClick={() => setRoomMode("join")}>뒤로가기</button>
+          </section>
+        )}
+
+        {roomMode === "savedRooms" && (
+          <section>
+            <h2>기존 방 목록</h2>
+
+            {savedRooms.length === 0 ? (
+              <p>아직 들어간 방이 없습니다.</p>
+            ) : (
+              savedRooms.map((room) => (
+                <div className="card" key={room.code}>
+                  <strong>방 코드: {room.code}</strong>
+                  <button onClick={() => enterSavedRoom(room.code)}>
+                    입장
+                  </button>
+                </div>
+              ))
+            )}
+
+            <button onClick={() => setRoomMode("start")}>뒤로가기</button>
+          </section>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="container">
       <h1>팀플 시간, 역할 계획</h1>
+
+      <div className="room-code-box">
+        방 코드: <strong>{roomCode}</strong>
+      </div>
 
       <nav>
         <button
@@ -213,12 +413,6 @@ function App() {
 
       {page === "main" && (
         <section>
-          {!hasMyMember && (
-            <div className="add-member-box">
-              <button onClick={addMember}>내 정보 추가</button>
-            </div>
-          )}
-
           <h2>시간 확인</h2>
 
           <div className="member-filter-box">
@@ -335,7 +529,6 @@ function App() {
         <section>
           <h2>시간표 관리</h2>
 
-
           {sortedMembers.map((member) => {
             const mine = isMine(member)
 
@@ -378,9 +571,7 @@ function App() {
                   </div>
                 )}
 
-                {mine ? (
-                  <button onClick={() => deleteMember(member)}>삭제</button>
-                ) : (
+                {!mine && (
                   <p className="readonly-text">
                     다른 팀원의 정보라 수정할 수 없습니다.
                   </p>
