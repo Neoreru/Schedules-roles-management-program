@@ -355,13 +355,12 @@ function App() {
 
         {roomMode === "start" && (
           <section>
-            <h2>시작하기</h2>
 
             <div className="add-member-box">
               <button onClick={createRoom}>방 생성</button>
               <button onClick={() => setRoomMode("join")}>방 입장</button>
               <button onClick={() => setRoomMode("savedRooms")}>
-                기존 방 들어가기
+                입장한 방 목록
               </button>
             </div>
           </section>
@@ -385,7 +384,7 @@ function App() {
               placeholder="내 이름 입력"
             />
 
-            <button onClick={enterRoomWithName}>방 입장</button>
+            <button onClick={enterRoomWithName}>방 생성</button>
 
             <button
               onClick={() => {
@@ -411,7 +410,7 @@ function App() {
               placeholder="방 코드 입력"
             />
 
-            <button onClick={joinRoom}>확인</button>
+            <button onClick={joinRoom}>방 입장</button>
 
             <button
               onClick={() => {
@@ -478,7 +477,7 @@ function App() {
 
         {roomMode === "savedRooms" && (
           <section>
-            <h2>기존 방 목록</h2>
+            <h2>입장한 방 목록</h2>
 
             {savedRooms.length === 0 ? (
               <p>아직 들어간 방이 없습니다.</p>
