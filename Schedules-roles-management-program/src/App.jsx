@@ -9,6 +9,8 @@ import {
   orderBy,
   setDoc,
   getDoc,
+  getDocs,
+  where,
 } from "firebase/firestore"
 
 import { db } from "./firebase"
@@ -147,6 +149,16 @@ function App() {
     setRoomMode("joinName")
   }
 
+  const hasMyMemberInRoom = async (code) => {
+    const q = query(
+      collection(db, "rooms", code, "members"),
+      where("ownerId", "==", deviceId)
+    )
+
+    const snapshot = await getDocs(q)
+    return !snapshot.empty
+  }
+
   const enterRoomWithName = async () => {
     const name = userName.trim()
 
@@ -155,14 +167,18 @@ function App() {
       return
     }
 
-    await addDoc(collection(db, "rooms", roomCode, "members"), {
-      name,
-      availableTimes: [],
-      role: "",
-      memo: "",
-      ownerId: deviceId,
-      createdAt: Date.now(),
-    })
+    const alreadyHasMyMember = await hasMyMemberInRoom(roomCode)
+
+    if (!alreadyHasMyMember) {
+      await addDoc(collection(db, "rooms", roomCode, "members"), {
+        name,
+        availableTimes: [],
+        role: "",
+        memo: "",
+        ownerId: deviceId,
+        createdAt: Date.now(),
+      })
+    }
 
     saveJoinedRoom(roomCode)
     setSavedRooms(getSavedRooms())
@@ -170,6 +186,7 @@ function App() {
     setPage("main")
     setRoomMode("start")
     setUserName("")
+    setJoinCode("")
   }
 
   const enterSavedRoom = async (code) => {
@@ -184,6 +201,18 @@ function App() {
     setRoomCode(code)
     setIsJoined(true)
     setPage("main")
+  }
+
+  const goToRoomList = () => {
+    setIsJoined(false)
+    setRoomCode("")
+    setPage("main")
+    setMembers([])
+    setSelectedMemberIds([])
+    setEditingNameId(null)
+    setEditingRoleId(null)
+    setRoomMode("start")
+    setSavedRooms(getSavedRooms())
   }
 
   const isMine = (member) => {
@@ -209,10 +238,7 @@ function App() {
 
   const updateMemberName = async (member, newName) => {
     if (!isMine(member)) return
-
-    await updateDoc(memberDoc(member.id), {
-      name: newName,
-    })
+    await updateDoc(memberDoc(member.id), { name: newName })
   }
 
   const toggleTime = async (member, day, time) => {
@@ -409,6 +435,10 @@ function App() {
         >
           역할 관리 페이지
         </button>
+
+        <button className="inactive-button" onClick={goToRoomList}>
+          ← 방 목록으로
+        </button>
       </nav>
 
       {page === "main" && (
@@ -425,12 +455,8 @@ function App() {
                   min="1"
                   onChange={(e) => {
                     const value = e.target.value
-
-                    if (value === "") {
-                      setMinPeople("")
-                    } else {
-                      setMinPeople(Number(value))
-                    }
+                    if (value === "") setMinPeople("")
+                    else setMinPeople(Number(value))
                   }}
                   onBlur={() => {
                     if (minPeople === "" || Number(minPeople) < 1) {

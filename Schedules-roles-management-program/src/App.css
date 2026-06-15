@@ -375,3 +375,10 @@ table {
   gap: 10px;
   flex-wrap: wrap;
 }
+
+
+.room-code-box {
+  text-align: right;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
