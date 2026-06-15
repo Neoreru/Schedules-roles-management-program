@@ -402,3 +402,28 @@ table {
   border-radius: 8px;
   cursor: pointer;
 }
+
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.app-title-small {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.room-code-box {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.room-list-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}

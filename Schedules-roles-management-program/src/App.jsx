@@ -63,6 +63,8 @@ function App() {
   const [roomCode, setRoomCode] = useState("")
   const [joinCode, setJoinCode] = useState("")
   const [userName, setUserName] = useState("")
+  const [roomName, setRoomName] = useState("")
+  const [currentRoomName, setCurrentRoomName] = useState("")
   const [isJoined, setIsJoined] = useState(false)
   const [savedRooms, setSavedRooms] = useState(getSavedRooms)
 
@@ -77,8 +79,6 @@ function App() {
   const [editingRoleId, setEditingRoleId] = useState(null)
   const [editingRole, setEditingRole] = useState("")
   const [editingMemo, setEditingMemo] = useState("")
-
-  const [alreadyJoinedRoom, setAlreadyJoinedRoom] = useState(false)
 
   useEffect(() => {
     if (!isJoined || !roomCode) return
@@ -101,6 +101,21 @@ function App() {
   }, [isJoined, roomCode])
 
   useEffect(() => {
+    if (!isJoined || !roomCode) return
+
+    const loadRoomInfo = async () => {
+      const roomRef = doc(db, "rooms", roomCode)
+      const roomSnap = await getDoc(roomRef)
+
+      if (roomSnap.exists()) {
+        setCurrentRoomName(roomSnap.data().roomName || "이름 없는 방")
+      }
+    }
+
+    loadRoomInfo()
+  }, [isJoined, roomCode])
+
+  useEffect(() => {
     setSelectedMemberIds((prev) => {
       const currentIds = members.map((member) => member.id)
       return prev.filter((id) => currentIds.includes(id))
@@ -111,55 +126,12 @@ function App() {
     return Math.random().toString(36).substring(2, 8).toUpperCase()
   }
 
-  const createRoom = async () => {
-    let code = generateRoomCode()
-    let roomRef = doc(db, "rooms", code)
-    let roomSnap = await getDoc(roomRef)
-
-    while (roomSnap.exists()) {
-      code = generateRoomCode()
-      roomRef = doc(db, "rooms", code)
-      roomSnap = await getDoc(roomRef)
-    }
-
-    await setDoc(roomRef, {
-      ownerId: deviceId,
-      createdAt: Date.now(),
-    })
+  const createRoom = () => {
+    const code = generateRoomCode()
 
     setRoomCode(code)
     setRoomMode("createName")
   }
-
-  const joinRoom = async () => {
-  const code = joinCode.trim().toUpperCase()
-
-  if (!code) {
-    alert("방 코드를 입력해주세요.")
-    return
-  }
-
-  const roomRef = doc(db, "rooms", code)
-  const roomSnap = await getDoc(roomRef)
-
-  if (!roomSnap.exists()) {
-    alert("존재하지 않는 방입니다.")
-    return
-  }
-
-  const alreadyHasMyMember = await hasMyMemberInRoom(code)
-
-  setRoomCode(code)
-
-  if (alreadyHasMyMember) {
-    setAlreadyJoinedRoom(true)
-    setRoomMode("alreadyJoined")
-    return
-  }
-
-  setAlreadyJoinedRoom(false)
-  setRoomMode("joinName")
-}
 
   const hasMyMemberInRoom = async (code) => {
     const q = query(
@@ -171,12 +143,51 @@ function App() {
     return !snapshot.empty
   }
 
+  const joinRoom = async () => {
+    const code = joinCode.trim().toUpperCase()
+
+    if (!code) {
+      alert("방 코드를 입력해주세요.")
+      return
+    }
+
+    const roomRef = doc(db, "rooms", code)
+    const roomSnap = await getDoc(roomRef)
+
+    if (!roomSnap.exists()) {
+      alert("존재하지 않는 방입니다.")
+      return
+    }
+
+    const alreadyHasMyMember = await hasMyMemberInRoom(code)
+
+    setRoomCode(code)
+
+    if (alreadyHasMyMember) {
+      setRoomMode("alreadyJoined")
+      return
+    }
+
+    setRoomMode("joinName")
+  }
+
   const enterRoomWithName = async () => {
     const name = userName.trim()
 
     if (!name) {
       alert("이름을 입력해주세요.")
       return
+    }
+
+    const roomRef = doc(db, "rooms", roomCode)
+    const roomSnap = await getDoc(roomRef)
+
+    if (!roomSnap.exists()) {
+      await setDoc(roomRef, {
+        roomName: roomName.trim() || "이름 없는 방",
+        ownerId: deviceId,
+        createdAt: Date.now(),
+      })
     }
 
     const alreadyHasMyMember = await hasMyMemberInRoom(roomCode)
@@ -198,6 +209,7 @@ function App() {
     setPage("main")
     setRoomMode("start")
     setUserName("")
+    setRoomName("")
     setJoinCode("")
   }
 
@@ -218,6 +230,7 @@ function App() {
   const goToRoomList = () => {
     setIsJoined(false)
     setRoomCode("")
+    setCurrentRoomName("")
     setPage("main")
     setMembers([])
     setSelectedMemberIds([])
@@ -346,8 +359,15 @@ function App() {
 
         {roomMode === "createName" && (
           <section>
-            <h2>이름 입력</h2>
+            <h2>방 정보 입력</h2>
             <p>생성된 방 코드: {roomCode}</p>
+
+            <input
+              className="name-input"
+              value={roomName}
+              onChange={(e) => setRoomName(e.target.value)}
+              placeholder="방 이름 입력"
+            />
 
             <input
               className="name-input"
@@ -357,7 +377,17 @@ function App() {
             />
 
             <button onClick={enterRoomWithName}>방 입장</button>
-            <button onClick={() => setRoomMode("start")}>뒤로가기</button>
+
+            <button
+              onClick={() => {
+                setRoomCode("")
+                setRoomName("")
+                setUserName("")
+                setRoomMode("start")
+              }}
+            >
+              뒤로가기
+            </button>
           </section>
         )}
 
@@ -373,7 +403,15 @@ function App() {
             />
 
             <button onClick={joinRoom}>확인</button>
-            <button onClick={() => setRoomMode("start")}>뒤로가기</button>
+
+            <button
+              onClick={() => {
+                setJoinCode("")
+                setRoomMode("start")
+              }}
+            >
+              뒤로가기
+            </button>
           </section>
         )}
 
@@ -390,32 +428,22 @@ function App() {
             />
 
             <button onClick={enterRoomWithName}>방 입장</button>
-            <button onClick={() => setRoomMode("join")}>뒤로가기</button>
+
+            <button
+              onClick={() => {
+                setUserName("")
+                setRoomMode("join")
+              }}
+            >
+              뒤로가기
+            </button>
           </section>
         )}
 
         {roomMode === "alreadyJoined" && (
           <section>
             <h2>이미 입장한 방입니다</h2>
-            <p>방 코드: {roomCode}</p>
-
-            <button
-              onClick={() => {
-                setIsJoined(true)
-                setPage("main")
-              }}
-            >
-              기존 정보로 입장
-            </button>
-
-            <button
-              onClick={() => {
-                setRoomMode("join")
-                setAlreadyJoinedRoom(false)
-              }}
-            >
-              뒤로가기
-            </button>
+            <p>기존 방 목록에서 해당 방으로 입장할 수 있습니다.</p>
           </section>
         )}
 
@@ -446,6 +474,10 @@ function App() {
   return (
     <div className="container">
       <div className="top-bar">
+        <div className="app-title-small">
+          팀플 시간, 역할 계획
+        </div>
+
         <div className="room-code-box">
           방 코드: <strong>{roomCode}</strong>
         </div>
@@ -458,7 +490,7 @@ function App() {
         </button>
       </div>
 
-      <h1>팀플 시간, 역할 계획</h1>
+      <h1>{currentRoomName || "이름 없는 방"}</h1>
 
       <nav>
         <button
@@ -497,8 +529,12 @@ function App() {
                   min="1"
                   onChange={(e) => {
                     const value = e.target.value
-                    if (value === "") setMinPeople("")
-                    else setMinPeople(Number(value))
+
+                    if (value === "") {
+                      setMinPeople("")
+                    } else {
+                      setMinPeople(Number(value))
+                    }
                   }}
                   onBlur={() => {
                     if (minPeople === "" || Number(minPeople) < 1) {
