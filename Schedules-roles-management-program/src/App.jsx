@@ -454,6 +454,24 @@ function App() {
           <section>
             <h2>이미 입장한 방입니다</h2>
             <p>기존 방 목록에서 해당 방으로 입장할 수 있습니다.</p>
+
+            <button
+              onClick={() => {
+                setIsJoined(true)
+                setPage("main")
+              }}
+            >
+              기존 정보로 입장
+            </button>
+
+            <button
+              onClick={() => {
+                setRoomMode("join")
+                setJoinCode("")
+              }}
+            >
+              뒤로가기
+            </button>
           </section>
         )}
 
