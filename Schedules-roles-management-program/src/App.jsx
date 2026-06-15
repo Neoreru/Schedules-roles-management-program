@@ -40,19 +40,20 @@ function getSavedRooms() {
   return JSON.parse(localStorage.getItem("joinedRooms") || "[]")
 }
 
-function saveJoinedRoom(roomCode) {
+function saveJoinedRoom(roomCode, roomName) {
   const savedRooms = getSavedRooms()
   const alreadyExists = savedRooms.some((room) => room.code === roomCode)
 
   if (alreadyExists) return
 
   const newRooms = [
-    ...savedRooms,
-    {
-      code: roomCode,
-      joinedAt: Date.now(),
-    },
-  ]
+  ...savedRooms,
+  {
+    code: roomCode,
+    roomName: roomName,
+    joinedAt: Date.now(),
+  },
+]
 
   localStorage.setItem("joinedRooms", JSON.stringify(newRooms))
 }
@@ -173,9 +174,15 @@ function App() {
 
   const enterRoomWithName = async () => {
     const name = userName.trim()
+    const newRoomName = roomName.trim()
 
     if (!name) {
-      alert("이름을 입력해주세요.")
+      alert("사용자 이름을 입력해주세요.")
+      return
+    }
+
+    if (!newRoomName && roomMode === "createName") {
+      alert("방 이름을 입력해주세요.")
       return
     }
 
@@ -184,7 +191,7 @@ function App() {
 
     if (!roomSnap.exists()) {
       await setDoc(roomRef, {
-        roomName: roomName.trim() || "이름 없는 방",
+        roomName: newRoomName,
         ownerId: deviceId,
         createdAt: Date.now(),
       })
@@ -203,7 +210,10 @@ function App() {
       })
     }
 
-    saveJoinedRoom(roomCode)
+    saveJoinedRoom(
+      roomCode,
+      roomName || currentRoomName
+    )
     setSavedRooms(getSavedRooms())
     setIsJoined(true)
     setPage("main")
@@ -456,7 +466,12 @@ function App() {
             ) : (
               savedRooms.map((room) => (
                 <div className="card" key={room.code}>
-                  <strong>방 코드: {room.code}</strong>
+                  <h3>{room.roomName || "이름 없는 방"}</h3>
+
+                  <strong>
+                    방 코드: {room.code}
+                  </strong>
+
                   <button onClick={() => enterSavedRoom(room.code)}>
                     입장
                   </button>
@@ -474,12 +489,12 @@ function App() {
   return (
     <div className="container">
       <div className="top-bar">
-        <div className="app-title-small">
-          팀플 시간, 역할 계획
-        </div>
-
         <div className="room-code-box">
           방 코드: <strong>{roomCode}</strong>
+        </div>
+
+        <div className="app-title-small">
+          팀플 시간, 역할 계획 프로그램
         </div>
 
         <button

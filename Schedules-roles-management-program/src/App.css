@@ -427,3 +427,32 @@ table {
   border-radius: 8px;
   cursor: pointer;
 }
+
+
+
+.top-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.room-code-box {
+  justify-self: start;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.app-title-small {
+  justify-self: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.room-list-button {
+  justify-self: end;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
