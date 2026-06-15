@@ -78,6 +78,8 @@ function App() {
   const [editingRole, setEditingRole] = useState("")
   const [editingMemo, setEditingMemo] = useState("")
 
+  const [alreadyJoinedRoom, setAlreadyJoinedRoom] = useState(false)
+
   useEffect(() => {
     if (!isJoined || !roomCode) return
 
@@ -130,24 +132,34 @@ function App() {
   }
 
   const joinRoom = async () => {
-    const code = joinCode.trim().toUpperCase()
+  const code = joinCode.trim().toUpperCase()
 
-    if (!code) {
-      alert("방 코드를 입력해주세요.")
-      return
-    }
-
-    const roomRef = doc(db, "rooms", code)
-    const roomSnap = await getDoc(roomRef)
-
-    if (!roomSnap.exists()) {
-      alert("존재하지 않는 방입니다.")
-      return
-    }
-
-    setRoomCode(code)
-    setRoomMode("joinName")
+  if (!code) {
+    alert("방 코드를 입력해주세요.")
+    return
   }
+
+  const roomRef = doc(db, "rooms", code)
+  const roomSnap = await getDoc(roomRef)
+
+  if (!roomSnap.exists()) {
+    alert("존재하지 않는 방입니다.")
+    return
+  }
+
+  const alreadyHasMyMember = await hasMyMemberInRoom(code)
+
+  setRoomCode(code)
+
+  if (alreadyHasMyMember) {
+    setAlreadyJoinedRoom(true)
+    setRoomMode("alreadyJoined")
+    return
+  }
+
+  setAlreadyJoinedRoom(false)
+  setRoomMode("joinName")
+}
 
   const hasMyMemberInRoom = async (code) => {
     const q = query(
@@ -382,6 +394,31 @@ function App() {
           </section>
         )}
 
+        {roomMode === "alreadyJoined" && (
+          <section>
+            <h2>이미 입장한 방입니다</h2>
+            <p>방 코드: {roomCode}</p>
+
+            <button
+              onClick={() => {
+                setIsJoined(true)
+                setPage("main")
+              }}
+            >
+              기존 정보로 입장
+            </button>
+
+            <button
+              onClick={() => {
+                setRoomMode("join")
+                setAlreadyJoinedRoom(false)
+              }}
+            >
+              뒤로가기
+            </button>
+          </section>
+        )}
+
         {roomMode === "savedRooms" && (
           <section>
             <h2>기존 방 목록</h2>
@@ -408,11 +445,20 @@ function App() {
 
   return (
     <div className="container">
-      <h1>팀플 시간, 역할 계획</h1>
+      <div className="top-bar">
+        <div className="room-code-box">
+          방 코드: <strong>{roomCode}</strong>
+        </div>
 
-      <div className="room-code-box">
-        방 코드: <strong>{roomCode}</strong>
+        <button
+          className="room-list-button"
+          onClick={goToRoomList}
+        >
+          돌아가기
+        </button>
       </div>
+
+      <h1>팀플 시간, 역할 계획</h1>
 
       <nav>
         <button
@@ -434,10 +480,6 @@ function App() {
           onClick={() => setPage("role")}
         >
           역할 관리 페이지
-        </button>
-
-        <button className="inactive-button" onClick={goToRoomList}>
-          ← 방 목록으로
         </button>
       </nav>
 

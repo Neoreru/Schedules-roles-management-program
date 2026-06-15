@@ -382,3 +382,23 @@ table {
   margin-bottom: 12px;
   font-size: 14px;
 }
+
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.room-code-box {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.room-list-button {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
