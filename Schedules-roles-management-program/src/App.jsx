@@ -351,15 +351,32 @@ function App() {
   if (!isJoined) {
     return (
       <div className="container">
-        <h1>팀플 시간, 역할 계획 프로그램</h1>
 
         {roomMode === "start" && (
-          <section>
+          <section className="start-card">
+            <div className="start-badge">TEAM SCHEDULER</div>
 
-            <div className="add-member-box">
-              <button onClick={createRoom}>방 생성</button>
-              <button onClick={() => setRoomMode("join")}>방 입장</button>
-              <button onClick={() => setRoomMode("savedRooms")}>
+            <h1 className="start-title">
+              팀플 시간, 역할 계획 프로그램
+            </h1>
+
+            <p className="start-description">
+              방을 만들고 팀원들과 가능한 시간, 역할, 메모를 함께 관리해보세요.
+            </p>
+
+            <div className="start-button-box">
+              <button className="primary-start-button" onClick={createRoom}>
+                방 생성
+              </button>
+
+              <button className="secondary-start-button" onClick={() => setRoomMode("join")}>
+                방 입장
+              </button>
+
+              <button
+                className="secondary-start-button"
+                onClick={() => setRoomMode("savedRooms")}
+              >
                 입장한 방 목록
               </button>
             </div>
@@ -384,7 +401,7 @@ function App() {
               placeholder="내 이름 입력"
             />
 
-            <button onClick={enterRoomWithName}>방 생성</button>
+            <button onClick={enterRoomWithName}>생성하기</button>
 
             <button
               onClick={() => {
@@ -410,7 +427,7 @@ function App() {
               placeholder="방 코드 입력"
             />
 
-            <button onClick={joinRoom}>방 입장</button>
+            <button onClick={joinRoom}>입장하기</button>
 
             <button
               onClick={() => {

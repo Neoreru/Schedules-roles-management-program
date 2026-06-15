@@ -468,3 +468,73 @@ table {
   gap: 20px;
   margin-top: 40px;
 }
+
+
+
+
+
+.start-card {
+  max-width: 760px;
+  margin: 40px auto;
+  padding: 56px 48px;
+  text-align: center;
+  background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+  border: 1px solid #e2e5ef;
+  border-radius: 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+.start-badge {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4f6df5;
+}
+
+.start-title {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.25;
+  letter-spacing: -1px;
+}
+
+.start-description {
+  margin: 20px auto 34px;
+  max-width: 520px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #5b5f75;
+}
+
+.start-button-box {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.primary-start-button {
+  padding: 16px 28px;
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  background: #4f6df5;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.secondary-start-button {
+  padding: 16px 24px;
+  font-size: 17px;
+  font-weight: 700;
+  background: #eef0f4;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+}
