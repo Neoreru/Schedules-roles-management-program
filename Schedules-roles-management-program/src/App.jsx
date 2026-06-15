@@ -351,7 +351,7 @@ function App() {
   if (!isJoined) {
     return (
       <div className="container">
-        <h1>팀플 시간, 역할 계획</h1>
+        <h1>팀플 시간, 역할 계획 프로그램</h1>
 
         {roomMode === "start" && (
           <section>
@@ -370,7 +370,6 @@ function App() {
         {roomMode === "createName" && (
           <section>
             <h2>방 정보 입력</h2>
-            <p>생성된 방 코드: {roomCode}</p>
 
             <input
               className="name-input"

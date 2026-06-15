@@ -169,8 +169,9 @@ td {
 }
 
 .card {
-  margin: 28px auto;
-  padding: 28px;
+  margin: 16px auto;
+  padding: 16px;
+
   background: white;
   border: 1px solid #e2e5ef;
   border-radius: 20px;
