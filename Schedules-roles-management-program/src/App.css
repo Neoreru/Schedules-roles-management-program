@@ -481,8 +481,8 @@ table {
   margin: 0;
   padding: 56px 48px;
   text-align: center;
-  background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
-  border: 1px solid #e2e5ef;
+  background: #FFFFFF;
+  border: 2px solid #FFD54F;
   border-radius: 32px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
 }
@@ -495,8 +495,8 @@ table {
   font-weight: 700;
   letter-spacing: 1px;
   border-radius: 999px;
-  background: #eef2ff;
-  color: #4f6df5;
+  background: #FFE082;
+  color: #795548;
 }
 
 .start-title {
@@ -536,7 +536,8 @@ table {
   padding: 16px 24px;
   font-size: 17px;
   font-weight: 700;
-  background: #eef0f4;
+  background: #FFF3CD;
+  color: #795548;
   border: none;
   border-radius: 16px;
   cursor: pointer;
@@ -562,4 +563,8 @@ table {
   align-items: center;
 
   text-align: center;
+}
+
+body {
+  background: #FFF8E6;
 }
