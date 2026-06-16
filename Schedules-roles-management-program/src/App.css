@@ -683,8 +683,8 @@ th:first-child {
 .schedule-header-row,
 .schedule-row {
   display: grid;
-  grid-template-columns: 90px repeat(7, 90px);
-  min-width: 720px;
+  grid-template-columns: 110px repeat(7, 110px);
+  min-width: 880px;
 }
 
 .schedule-header-row {
