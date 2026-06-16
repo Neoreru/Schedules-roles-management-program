@@ -578,28 +578,110 @@ td {
 /* 모바일 */
 
 @media (max-width: 768px) {
+  .container {
+    width: 100%;
+    margin: 0;
+    padding: 20px 12px;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+
+  .app-container {
+    padding: 24px 8px;
+  }
+
+  h1 {
+    font-size: 34px;
+  }
+
+  h2 {
+    font-size: 26px;
+  }
+
+  nav,
+  .view-toggle-box {
+    flex-wrap: wrap;
+  }
+
+  button {
+    font-size: 15px;
+    padding: 12px 18px;
+  }
+
+  .start-card {
+    width: 100%;
+    padding: 44px 20px;
+    box-sizing: border-box;
+  }
+
+  .start-title {
+    font-size: 34px;
+  }
+
+  .start-description {
+    font-size: 15px;
+  }
+
   .card {
     padding: 12px;
     margin: 12px 0;
     overflow: visible;
   }
 
-  .mobile-schedule-box {
-    width: calc(100% + 32px);
-    margin-left: -16px;
-    margin-right: -16px;
-    max-width: none;
-    max-height: 70vh;
-    overflow: auto;
+  .member-filter-box {
+    max-width: 100%;
   }
 
+  .member-checkbox {
+    font-size: 15px;
+    padding: 8px 12px;
+  }
+
+  input[type="number"] {
+    width: 120px;
+  }
+
+  .name-input {
+    width: 220px;
+  }
+
+  .memo-input {
+    width: 90%;
+  }
+
+  .room-code-box {
+    top: 18px;
+    left: 14px;
+    font-size: 13px;
+  }
+
+  .room-list-button {
+    top: 12px;
+    right: 14px;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .mobile-schedule-box,
   .main-schedule-box {
     width: calc(100% + 32px);
     margin-left: -16px;
     margin-right: -16px;
     max-width: none;
-    max-height: 70vh;
-    overflow: auto;
+
+    max-height: none;
+    height: auto;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .mobile-schedule-box::-webkit-scrollbar,
+  .main-schedule-box::-webkit-scrollbar {
+    display: none;
   }
 
   .schedule-header-row,
