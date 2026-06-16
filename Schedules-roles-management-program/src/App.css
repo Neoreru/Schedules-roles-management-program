@@ -626,3 +626,18 @@ body {
   cursor: pointer;
 }
 
+
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+td:first-child,
+th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 15;
+  background: white;
+}

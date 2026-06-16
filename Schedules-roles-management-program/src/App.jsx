@@ -797,7 +797,7 @@ function App() {
                 ) : (
                   <div className="name-view-box">
                     <strong>
-                      {member.name} {mine ? "(나)" : "(팀원)"}
+                      {member.name} {mine ? "(내 정보)" : "(팀원)"}
                     </strong>
 
                     {mine && (
@@ -872,7 +872,7 @@ function App() {
             return (
               <div className="card" key={member.id}>
                 <h3>
-                  {member.name} {mine ? "(내 정보)" : "(보기 전용)"}
+                  {member.name} {mine ? "(내 정보)" : "(팀원)"}
                 </h3>
 
                 {mine && editingRoleId === member.id ? (
