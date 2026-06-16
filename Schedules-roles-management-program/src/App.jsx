@@ -820,42 +820,41 @@ function App() {
                 )}
 
                 <h3>가능 시간 선택</h3>
-                <div className="time-table-wrapper">
-                  <table className="time-table">
-                    <thead>
-                      <tr>
-                        <th>시간</th>
-                        {days.map((day) => (
-                          <th key={day}>{day}</th>
-                        ))}
-                      </tr>
-                    </thead>
+                <div className="mobile-schedule-box">
+                  <div className="schedule-header-row">
+                    <div className="schedule-header-time">시간</div>
 
-                    <tbody>
-                      {times.map((time) => (
-                        <tr key={time}>
-                          <td>{time}</td>
+                    {days.map((day) => (
+                      <div className="schedule-header-day" key={day}>
+                        {day}
+                      </div>
+                    ))}
+                  </div>
 
-                          {days.map((day) => {
-                            const timeKey = `${day} ${time}`
-                            const checked = (member.availableTimes || []).includes(timeKey)
+                  <div className="schedule-body-scroll">
+                    {times.map((time) => (
+                      <div className="schedule-row" key={time}>
+                        <div className="schedule-time-cell">{time}</div>
 
-                            return (
-                              <td
-                                key={day}
-                                className={`time-cell ${checked ? "selected" : ""} ${
-                                  !mine ? "readonly" : ""
-                                }`}
-                                onClick={() => {
-                                  if (mine) toggleTime(member, day, time)
-                                }}
-                              ></td>
-                            )
-                          })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                        {days.map((day) => {
+                          const timeKey = `${day} ${time}`
+                          const checked = (member.availableTimes || []).includes(timeKey)
+
+                          return (
+                            <div
+                              key={day}
+                              className={`schedule-cell ${checked ? "selected" : ""} ${
+                                !mine ? "readonly" : ""
+                              }`}
+                              onClick={() => {
+                                if (mine) toggleTime(member, day, time)
+                              }}
+                            ></div>
+                          )
+                        })}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             )
