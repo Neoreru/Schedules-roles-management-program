@@ -687,10 +687,21 @@ th:first-child {
 .time-table thead th {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 30;
   background: white;
 }
 
 .time-table th:first-child {
   position: sticky;
-  left: 
+  left: 0;
+  z-index: 40;
+  background: white;
+}
+
+.time-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background: white;
+  font-weight: bold;
+}
