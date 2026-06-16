@@ -526,7 +526,7 @@ function App() {
   }
 
   return (
-    <div className="container">
+    <div className="app-container">
       <div className="top-bar">
         <div className="room-code-box">
           방 코드: <strong>{roomCode}</strong>
