@@ -668,3 +668,29 @@ th:first-child {
   background: white;
   font-weight: bold;
 }
+
+
+
+.time-table-wrapper {
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid #e2e5ef;
+  border-radius: 12px;
+}
+
+.time-table {
+  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.time-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+}
+
+.time-table th:first-child {
+  position: sticky;
+  left: 
