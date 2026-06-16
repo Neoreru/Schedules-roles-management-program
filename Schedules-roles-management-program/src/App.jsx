@@ -269,7 +269,7 @@ function App() {
 
     localStorage.setItem("joinedRooms", JSON.stringify(validRooms))
     setSavedRooms(validRooms)
-}
+  }
 
   const goToRoomList = () => {
     setIsJoined(false)
@@ -285,45 +285,44 @@ function App() {
   }
 
   const leaveRoom = async () => {
-  const confirmLeave = window.confirm("이 방을 나가시겠습니까?")
+    const confirmLeave = window.confirm("이 방을 나가시겠습니까?")
 
-  if (!confirmLeave) return
+    if (!confirmLeave) return
 
-  const q = query(
-    collection(db, "rooms", roomCode, "members"),
-    where("ownerId", "==", deviceId)
-  )
+    const q = query(
+      collection(db, "rooms", roomCode, "members"),
+      where("ownerId", "==", deviceId)
+    )
 
-  const snapshot = await getDocs(q)
+    const snapshot = await getDocs(q)
 
-  const deletePromises = snapshot.docs.map((memberDoc) =>
-    deleteDoc(doc(db, "rooms", roomCode, "members", memberDoc.id))
-  )
+    const deletePromises = snapshot.docs.map((memberDoc) =>
+      deleteDoc(doc(db, "rooms", roomCode, "members", memberDoc.id))
+    )
 
-  await Promise.all(deletePromises)
+    await Promise.all(deletePromises)
 
-  // 남은 팀원 확인
-  const remainSnapshot = await getDocs(
-    collection(db, "rooms", roomCode, "members")
-  )
+    const remainSnapshot = await getDocs(
+      collection(db, "rooms", roomCode, "members")
+    )
 
-  if (remainSnapshot.empty) {
-    await deleteDoc(doc(db, "rooms", roomCode))
+    if (remainSnapshot.empty) {
+      await deleteDoc(doc(db, "rooms", roomCode))
+    }
+
+    removeJoinedRoom(roomCode)
+
+    setSavedRooms(getSavedRooms())
+    setIsJoined(false)
+    setRoomCode("")
+    setCurrentRoomName("")
+    setPage("main")
+    setMembers([])
+    setSelectedMemberIds([])
+    setEditingNameId(null)
+    setEditingRoleId(null)
+    setRoomMode("start")
   }
-
-  removeJoinedRoom(roomCode)
-
-  setSavedRooms(getSavedRooms())
-  setIsJoined(false)
-  setRoomCode("")
-  setCurrentRoomName("")
-  setPage("main")
-  setMembers([])
-  setSelectedMemberIds([])
-  setEditingNameId(null)
-  setEditingRoleId(null)
-  setRoomMode("start")
-}
 
   const isMine = (member) => {
     return member.ownerId === deviceId
@@ -614,7 +613,6 @@ function App() {
           방 코드: <strong>{roomCode}</strong>
         </div>
 
-
         <button
           className="room-list-button"
           onClick={goToRoomList}
@@ -729,7 +727,7 @@ function App() {
           )}
 
           {viewMode === "image" && (
-            <div className="main-schedule-box">
+            <div className="main-schedule-area">
               <div className="main-schedule-header-row">
                 <div className="main-schedule-header-time">시간</div>
 
@@ -762,6 +760,7 @@ function App() {
               </div>
             </div>
           )}
+
           <div className="leave-room-box">
             <button className="leave-room-button" onClick={leaveRoom}>
               나가기
@@ -823,7 +822,8 @@ function App() {
                 )}
 
                 <h3>가능 시간 선택</h3>
-                <div className="mobile-schedule-box">
+
+                <div className="schedule-area">
                   <div className="schedule-header-row">
                     <div className="schedule-header-time">시간</div>
 
@@ -834,7 +834,7 @@ function App() {
                     ))}
                   </div>
 
-                  <div className="schedule-body-scroll">
+                  <div className="schedule-body">
                     {times.map((time) => (
                       <div className="schedule-row" key={time}>
                         <div className="schedule-time-cell">{time}</div>
