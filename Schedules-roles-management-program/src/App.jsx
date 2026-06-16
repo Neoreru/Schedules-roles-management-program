@@ -47,13 +47,13 @@ function saveJoinedRoom(roomCode, roomName) {
   if (alreadyExists) return
 
   const newRooms = [
-  ...savedRooms,
-  {
-    code: roomCode,
-    roomName: roomName,
-    joinedAt: Date.now(),
-  },
-]
+    ...savedRooms,
+    {
+      code: roomCode,
+      roomName,
+      joinedAt: Date.now(),
+    },
+  ]
 
   localStorage.setItem("joinedRooms", JSON.stringify(newRooms))
 }
@@ -129,7 +129,6 @@ function App() {
 
   const createRoom = () => {
     const code = generateRoomCode()
-
     setRoomCode(code)
     setRoomMode("createName")
   }
@@ -181,7 +180,7 @@ function App() {
       return
     }
 
-    if (!newRoomName && roomMode === "createName") {
+    if (roomMode === "createName" && !newRoomName) {
       alert("방 이름을 입력해주세요.")
       return
     }
@@ -210,10 +209,7 @@ function App() {
       })
     }
 
-    saveJoinedRoom(
-      roomCode,
-      roomName || currentRoomName
-    )
+    saveJoinedRoom(roomCode, newRoomName || currentRoomName || "이름 없는 방")
     setSavedRooms(getSavedRooms())
     setIsJoined(true)
     setPage("main")
@@ -350,174 +346,181 @@ function App() {
 
   if (!isJoined) {
     return (
-      <div className="container">
+      <div className="start-screen-wrapper">
+        <div className="container">
+          {roomMode === "start" && (
+            <section className="start-card">
+              <div className="start-badge">TEAM SCHEDULER</div>
 
-        {roomMode === "start" && (
-          <section className="start-card center-card">
-            <div className="start-badge">TEAM SCHEDULER</div>
+              <h1 className="start-title">
+                팀플 시간, 역할 계획 프로그램
+              </h1>
 
-            <h1 className="start-title">
-              팀플 시간, 역할 계획 프로그램
-            </h1>
+              <p className="start-description">
+                방을 만들고 팀원들과 가능한 시간, 역할, 메모를 함께 관리해보세요.
+              </p>
 
-            <p className="start-description">
-              방을 만들고 팀원들과 가능한 시간, 역할, 메모를 함께 관리해보세요.
-            </p>
+              <div className="start-button-box">
+                <button className="primary-start-button" onClick={createRoom}>
+                  방 생성
+                </button>
 
-            <div className="start-button-box">
-              <button className="primary-start-button" onClick={createRoom}>
-                방 생성
-              </button>
+                <button
+                  className="secondary-start-button"
+                  onClick={() => setRoomMode("join")}
+                >
+                  방 입장
+                </button>
 
-              <button className="secondary-start-button" onClick={() => setRoomMode("join")}>
-                방 입장
-              </button>
+                <button
+                  className="secondary-start-button"
+                  onClick={() => setRoomMode("savedRooms")}
+                >
+                  입장한 방 목록
+                </button>
+              </div>
+            </section>
+          )}
 
-              <button
-                className="secondary-start-button"
-                onClick={() => setRoomMode("savedRooms")}
-              >
-                입장한 방 목록
-              </button>
-            </div>
-          </section>
-        )}
+          {roomMode === "createName" && (
+            <section className="fullscreen-center">
+              <h2>방 정보 입력</h2>
 
-        {roomMode === "createName" && (
-          <section className="fullscreen-center">
-            <h2>방 정보 입력</h2>
-            <div className="create-room-row">
-              <input
-                className="name-input"
-                value={roomName}
-                onChange={(e) => setRoomName(e.target.value)}
-                placeholder="방 이름 입력"
-              />
+              <div className="create-room-row">
+                <input
+                  className="name-input"
+                  value={roomName}
+                  onChange={(e) => setRoomName(e.target.value)}
+                  placeholder="방 이름 입력"
+                />
 
-              <input
-                className="name-input"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                placeholder="내 이름 입력"
-              />
+                <input
+                  className="name-input"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  placeholder="내 이름 입력"
+                />
 
-              <button onClick={enterRoomWithName}>생성하기</button>
+                <button onClick={enterRoomWithName}>생성하기</button>
 
-              <button
-                onClick={() => {
-                  setRoomCode("")
-                  setRoomName("")
-                  setUserName("")
-                  setRoomMode("start")
-                }}
-              >
-                뒤로가기
-              </button>
-            </div>
-          </section>
-        )}
+                <button
+                  onClick={() => {
+                    setRoomCode("")
+                    setRoomName("")
+                    setUserName("")
+                    setRoomMode("start")
+                  }}
+                >
+                  뒤로가기
+                </button>
+              </div>
+            </section>
+          )}
 
-        {roomMode === "join" && (
-          <section className="fullscreen-center">
-            <h2>방 입장</h2>
+          {roomMode === "join" && (
+            <section className="fullscreen-center">
+              <h2>방 입장</h2>
 
-            <input
-              className="name-input"
-              value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-              placeholder="방 코드 입력"
-            />
+              <div className="create-room-row">
+                <input
+                  className="name-input"
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                  placeholder="방 코드 입력"
+                />
 
-            <button onClick={joinRoom}>입장하기</button>
+                <button onClick={joinRoom}>입장하기</button>
 
-            <button
-              onClick={() => {
-                setJoinCode("")
-                setRoomMode("start")
-              }}
-            >
-              뒤로가기
-            </button>
-          </section>
-        )}
+                <button
+                  onClick={() => {
+                    setJoinCode("")
+                    setRoomMode("start")
+                  }}
+                >
+                  뒤로가기
+                </button>
+              </div>
+            </section>
+          )}
 
-        {roomMode === "joinName" && (
-          <section className="fullscreen-center">
-            <h2>이름 입력</h2>
-            <p>입장할 방 코드: {roomCode}</p>
+          {roomMode === "joinName" && (
+            <section className="fullscreen-center">
+              <h2>이름 입력</h2>
+              <p>입장할 방 코드: {roomCode}</p>
 
-            <input
-              className="name-input"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              placeholder="내 이름 입력"
-            />
+              <div className="create-room-row">
+                <input
+                  className="name-input"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  placeholder="내 이름 입력"
+                />
 
-            <button onClick={enterRoomWithName}>방 입장</button>
+                <button onClick={enterRoomWithName}>방 입장</button>
 
-            <button
-              onClick={() => {
-                setUserName("")
-                setRoomMode("join")
-              }}
-            >
-              뒤로가기
-            </button>
-          </section>
-        )}
+                <button
+                  onClick={() => {
+                    setUserName("")
+                    setRoomMode("join")
+                  }}
+                >
+                  뒤로가기
+                </button>
+              </div>
+            </section>
+          )}
 
-        {roomMode === "alreadyJoined" && (
-          <section>
-            <h2>이미 입장한 방입니다</h2>
-            <p>기존 방 목록에서 해당 방으로 입장할 수 있습니다.</p>
+          {roomMode === "alreadyJoined" && (
+            <section className="fullscreen-center">
+              <h2>이미 입장한 방입니다</h2>
+              <p>기존 방 목록에서 해당 방으로 입장할 수 있습니다.</p>
 
-            <div className="already-joined-buttons">
-              <button
-                onClick={() => {
-                  setIsJoined(true)
-                  setPage("main")
-                }}
-              >
-                기존 정보로 입장
-              </button>
+              <div className="already-joined-buttons">
+                <button
+                  onClick={() => {
+                    setIsJoined(true)
+                    setPage("main")
+                  }}
+                >
+                  기존 정보로 입장
+                </button>
 
-              <button
-                onClick={() => {
-                  setRoomMode("join")
-                  setJoinCode("")
-                }}
-              >
-                뒤로가기
-              </button>
-            </div>
-          </section>
-        )}
+                <button
+                  onClick={() => {
+                    setRoomMode("join")
+                    setJoinCode("")
+                  }}
+                >
+                  뒤로가기
+                </button>
+              </div>
+            </section>
+          )}
 
-        {roomMode === "savedRooms" && (
-          <section>
-            <h2>입장한 방 목록</h2>
+          {roomMode === "savedRooms" && (
+            <section>
+              <h2>입장한 방 목록</h2>
 
-            {savedRooms.length === 0 ? (
-              <p>아직 들어간 방이 없습니다.</p>
-            ) : (
-              savedRooms.map((room) => (
-                <div className="card" key={room.code}>
-                  <h3>{room.roomName || "이름 없는 방"}</h3>
+              {savedRooms.length === 0 ? (
+                <p>아직 들어간 방이 없습니다.</p>
+              ) : (
+                savedRooms.map((room) => (
+                  <div className="card" key={room.code}>
+                    <h3>{room.roomName || "이름 없는 방"}</h3>
 
-                  <strong>
-                    방 코드: {room.code}
-                  </strong>
+                    <strong>방 코드: {room.code}</strong>
 
-                  <button onClick={() => enterSavedRoom(room.code)}>
-                    입장
-                  </button>
-                </div>
-              ))
-            )}
+                    <button onClick={() => enterSavedRoom(room.code)}>
+                      입장
+                    </button>
+                  </div>
+                ))
+              )}
 
-            <button onClick={() => setRoomMode("start")}>뒤로가기</button>
-          </section>
-        )}
+              <button onClick={() => setRoomMode("start")}>뒤로가기</button>
+            </section>
+          )}
+        </div>
       </div>
     )
   }
