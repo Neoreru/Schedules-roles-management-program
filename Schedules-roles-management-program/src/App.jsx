@@ -232,7 +232,9 @@ function App() {
     const roomSnap = await getDoc(roomRef)
 
     if (!roomSnap.exists()) {
-      alert("존재하지 않는 방입니다.")
+      removeJoinedRoom(code)
+      setSavedRooms(getSavedRooms())
+      alert("존재하지 않는 방입니다. 목록에서 삭제합니다.")
       return
     }
 
