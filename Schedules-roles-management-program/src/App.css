@@ -421,7 +421,8 @@ td {
 /* 하나의 표 형태 시간표 */
 
 .schedule-scroll-box {
-  width: 100%;
+  width: max-content;
+  max-width: 100%;
   max-height: 72vh;
   overflow: auto;
   border: 1px solid #e2e5ef;
@@ -615,12 +616,13 @@ td {
     padding: 8px 12px;
   }
 
-  .schedule-scroll-box {
-    width: calc(100% + 32px);
-    margin-left: -16px;
-    margin-right: -16px;
-    max-height: 72vh;
-  }
+.schedule-scroll-box {
+  width: max-content;
+  max-width: calc(100% + 32px);
+  margin-left: -16px;
+  margin-right: -16px;
+  max-height: 72vh;
+}
 
   .schedule-grid {
     grid-template-columns: 90px repeat(7, 78px);
