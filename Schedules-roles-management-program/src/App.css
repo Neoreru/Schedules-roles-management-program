@@ -14,10 +14,8 @@ body {
   background: #fafbfc;
   font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
   color: #2f3140;
-}
-
-body {
   min-height: 100vh;
+  overflow-x: auto;
 }
 
 /* 전체 컨테이너 */
@@ -413,10 +411,10 @@ td {
 /* 시간 관리 페이지 - div/grid 시간표 */
 
 .mobile-schedule-box {
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
+  width: max-content;
+  max-width: none;
   max-height: none;
+  overflow: visible;
   border: 1px solid #e2e5ef;
   border-radius: 12px;
   background: white;
@@ -495,10 +493,10 @@ td {
 /* 메인 페이지 시간표 - div/grid 시간표 */
 
 .main-schedule-box {
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
+  width: max-content;
+  max-width: none;
   max-height: none;
+  overflow: visible;
   border: 1px solid #e2e5ef;
   border-radius: 12px;
   background: white;
@@ -681,14 +679,13 @@ td {
 
   .mobile-schedule-box,
   .main-schedule-box {
-    width: calc(100% + 32px);
-    margin-left: -16px;
-    margin-right: -16px;
+    width: max-content;
     max-width: none;
     max-height: none;
     height: auto;
-    overflow-x: auto;
-    overflow-y: visible;
+    margin-left: -16px;
+    margin-right: -16px;
+    overflow: visible;
   }
 
   .schedule-header-row,
