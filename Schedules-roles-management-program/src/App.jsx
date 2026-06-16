@@ -241,6 +241,24 @@ function App() {
     setPage("main")
   }
 
+  const cleanSavedRooms = async () => {
+  const rooms = getSavedRooms()
+
+  const validRooms = []
+
+  for (const room of rooms) {
+    const roomRef = doc(db, "rooms", room.code)
+    const roomSnap = await getDoc(roomRef)
+
+    if (roomSnap.exists()) {
+      validRooms.push(room)
+    }
+  }
+
+  localStorage.setItem("joinedRooms", JSON.stringify(validRooms))
+  setSavedRooms(validRooms)
+  }
+
   const goToRoomList = () => {
     setIsJoined(false)
     setRoomCode("")
@@ -423,7 +441,10 @@ function App() {
 
                 <button
                   className="secondary-start-button"
-                  onClick={() => setRoomMode("savedRooms")}
+                  onClick={async () => {
+                    await cleanSavedRooms()
+                    setRoomMode("savedRooms")
+                  }}
                 >
                   입장한 방 목록
                 </button>
