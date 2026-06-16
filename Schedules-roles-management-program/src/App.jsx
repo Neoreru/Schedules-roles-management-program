@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import {
   collection,
   addDoc,
@@ -89,12 +89,6 @@ function App() {
   const [editingRole, setEditingRole] = useState("")
   const [editingMemo, setEditingMemo] = useState("")
 
-  const [fixedHeader, setFixedHeader] = useState({
-    visible: false,
-    type: "",
-    left: 0,
-  })
-
   useEffect(() => {
     if (!isJoined || !roomCode) return
 
@@ -136,76 +130,6 @@ function App() {
       return prev.filter((id) => currentIds.includes(id))
     })
   }, [members])
-
-  useEffect(() => {
-    if (!isJoined) {
-      setFixedHeader({
-        visible: false,
-        type: "",
-        left: 0,
-      })
-      return
-    }
-
-    const updateFixedHeader = () => {
-      let selector = ""
-
-      if (page === "main" && viewMode === "image") {
-        selector = ".main-schedule-area"
-      }
-
-      if (page === "team") {
-        selector = ".schedule-area"
-      }
-
-      if (!selector) {
-        setFixedHeader({
-          visible: false,
-          type: "",
-          left: 0,
-        })
-        return
-      }
-
-      const scheduleElements = Array.from(document.querySelectorAll(selector))
-
-      const activeSchedule = scheduleElements.find((element) => {
-        const rect = element.getBoundingClientRect()
-        return rect.top <= 0 && rect.bottom > 48
-      })
-
-      if (!activeSchedule) {
-        setFixedHeader({
-          visible: false,
-          type: "",
-          left: 0,
-        })
-        return
-      }
-
-      const rect = activeSchedule.getBoundingClientRect()
-
-      setFixedHeader({
-        visible: true,
-        type: activeSchedule.classList.contains("main-schedule-area")
-          ? "main"
-          : "team",
-        left: rect.left,
-      })
-    }
-
-    updateFixedHeader()
-
-    window.addEventListener("scroll", updateFixedHeader, { passive: true })
-    window.addEventListener("resize", updateFixedHeader)
-    document.addEventListener("scroll", updateFixedHeader, true)
-
-    return () => {
-      window.removeEventListener("scroll", updateFixedHeader)
-      window.removeEventListener("resize", updateFixedHeader)
-      document.removeEventListener("scroll", updateFixedHeader, true)
-    }
-  }, [isJoined, page, viewMode, members])
 
   const generateRoomCode = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase()
@@ -498,6 +422,80 @@ function App() {
     return getCommonTimes().some((item) => item.time === timeKey)
   }
 
+  const renderMainScheduleGrid = () => {
+    return (
+      <div className="schedule-scroll-box">
+        <div className="schedule-grid">
+          <div className="schedule-corner-cell">시간</div>
+
+          {days.map((day) => (
+            <div className="schedule-day-cell" key={day}>
+              {day}
+            </div>
+          ))}
+
+          {times.map((time) => (
+            <Fragment key={time}>
+              <div className="schedule-time-cell">{time}</div>
+
+              {days.map((day) => {
+                const common = isCommonTime(day, time)
+
+                return (
+                  <div
+                    key={`${day}-${time}`}
+                    className={`schedule-body-cell ${
+                      common ? "schedule-common-cell" : ""
+                    }`}
+                  ></div>
+                )
+              })}
+            </Fragment>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const renderMemberScheduleGrid = (member, mine) => {
+    return (
+      <div className="schedule-scroll-box">
+        <div className="schedule-grid">
+          <div className="schedule-corner-cell">시간</div>
+
+          {days.map((day) => (
+            <div className="schedule-day-cell" key={day}>
+              {day}
+            </div>
+          ))}
+
+          {times.map((time) => (
+            <Fragment key={time}>
+              <div className="schedule-time-cell">{time}</div>
+
+              {days.map((day) => {
+                const timeKey = `${day} ${time}`
+                const checked = (member.availableTimes || []).includes(timeKey)
+
+                return (
+                  <div
+                    key={`${member.id}-${day}-${time}`}
+                    className={`schedule-body-cell ${
+                      checked ? "schedule-selected-cell" : ""
+                    } ${!mine ? "schedule-readonly-cell" : ""}`}
+                    onClick={() => {
+                      if (mine) toggleTime(member, day, time)
+                    }}
+                  ></div>
+                )
+              })}
+            </Fragment>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   if (!isJoined) {
     return (
       <div className="start-screen-wrapper">
@@ -684,23 +682,6 @@ function App() {
 
   return (
     <div className="app-container">
-      {fixedHeader.visible && (
-          <div className="fixed-schedule-header">
-            <div className="fixed-schedule-time">시간</div>
-
-            <div
-              className="fixed-schedule-days-track"
-              style={{ left: `${fixedHeader.left + 90}px` }}
-            >
-              {days.map((day) => (
-                <div className="fixed-schedule-day" key={day}>
-                  {day}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
       <div className="top-bar">
         <div className="room-code-box">
           방 코드: <strong>{roomCode}</strong>
@@ -819,40 +800,7 @@ function App() {
             </table>
           )}
 
-          {viewMode === "image" && (
-            <div className="main-schedule-area">
-              <div className="main-schedule-header-row">
-                <div className="main-schedule-header-time">시간</div>
-
-                {days.map((day) => (
-                  <div className="main-schedule-header-day" key={day}>
-                    {day}
-                  </div>
-                ))}
-              </div>
-
-              <div className="main-schedule-body">
-                {times.map((time) => (
-                  <div className="main-schedule-row" key={time}>
-                    <div className="main-schedule-time-cell">{time}</div>
-
-                    {days.map((day) => {
-                      const common = isCommonTime(day, time)
-
-                      return (
-                        <div
-                          key={day}
-                          className={`main-schedule-cell ${
-                            common ? "main-schedule-common" : ""
-                          }`}
-                        ></div>
-                      )
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {viewMode === "image" && renderMainScheduleGrid()}
 
           <div className="leave-room-box">
             <button className="leave-room-button" onClick={leaveRoom}>
@@ -916,42 +864,7 @@ function App() {
 
                 <h3>가능 시간 선택</h3>
 
-                <div className="schedule-area">
-                  <div className="schedule-header-row">
-                    <div className="schedule-header-time">시간</div>
-
-                    {days.map((day) => (
-                      <div className="schedule-header-day" key={day}>
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="schedule-body">
-                    {times.map((time) => (
-                      <div className="schedule-row" key={time}>
-                        <div className="schedule-time-cell">{time}</div>
-
-                        {days.map((day) => {
-                          const timeKey = `${day} ${time}`
-                          const checked = (member.availableTimes || []).includes(timeKey)
-
-                          return (
-                            <div
-                              key={day}
-                              className={`schedule-cell ${checked ? "selected" : ""} ${
-                                !mine ? "readonly" : ""
-                              }`}
-                              onClick={() => {
-                                if (mine) toggleTime(member, day, time)
-                              }}
-                            ></div>
-                          )
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                {renderMemberScheduleGrid(member, mine)}
               </div>
             )
           })}

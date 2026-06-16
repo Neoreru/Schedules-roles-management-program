@@ -1,11 +1,5 @@
 * {
   box-sizing: border-box;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-*::-webkit-scrollbar {
-  display: none;
 }
 
 html,
@@ -15,11 +9,21 @@ body {
   font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
   color: #2f3140;
   min-height: 100vh;
-  overflow-x: auto;
 }
 
 body {
   min-height: 100vh;
+}
+
+/* 스크롤바 숨김 */
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 /* 전체 컨테이너 */
@@ -35,75 +39,6 @@ body {
   width: 100%;
   min-height: 100vh;
   padding: 40px;
-}
-
-/* 고정 요일 헤더 */
-
-.fixed-schedule-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-
-  width: 100vw;
-  height: 48px;
-
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.fixed-schedule-time {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10001;
-
-  width: 90px;
-  height: 48px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-size: 16px;
-  font-weight: bold;
-  color: #1f2937;
-
-  background: white;
-  border: 1px solid #e2e5ef;
-  border-bottom: 1px solid #d7dbea;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-}
-
-.fixed-schedule-days-track {
-  position: absolute;
-  top: 0;
-  z-index: 10000;
-
-  display: grid;
-  grid-template-columns: repeat(7, 78px);
-  width: 546px;
-  height: 48px;
-
-  background: white;
-  border-top: 1px solid #e2e5ef;
-  border-bottom: 1px solid #d7dbea;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-}
-
-.fixed-schedule-day {
-  height: 48px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-size: 16px;
-  font-weight: bold;
-  color: #1f2937;
-
-  background: white;
-  border-right: 1px solid #e2e5ef;
 }
 
 /* 시작 화면 */
@@ -483,102 +418,85 @@ td {
   vertical-align: middle;
 }
 
-/* 시간표 공통 구조 */
+/* 하나의 표 형태 시간표 */
 
-.schedule-area,
-.main-schedule-area {
-  width: max-content;
-  max-width: none;
-  overflow: visible;
+.schedule-scroll-box {
+  width: 100%;
+  max-height: 72vh;
+  overflow: auto;
   border: 1px solid #e2e5ef;
   border-radius: 12px;
   background: white;
+  margin-top: 16px;
 }
 
-.schedule-header-row,
-.schedule-row,
-.main-schedule-header-row,
-.main-schedule-row {
+.schedule-grid {
   display: grid;
   grid-template-columns: 90px repeat(7, 78px);
+  width: max-content;
   min-width: 636px;
-}
-
-.schedule-header-row,
-.main-schedule-header-row {
-  position: relative;
-  z-index: 5;
   background: white;
 }
 
-.schedule-header-time,
-.main-schedule-header-time {
-  position: sticky;
-  left: 0;
-  z-index: 20;
-  background: white;
-}
-
-.schedule-header-day,
-.schedule-header-time,
-.main-schedule-header-day,
-.main-schedule-header-time {
-  height: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  border-right: 1px solid #e2e5ef;
-  border-bottom: 1px solid #e2e5ef;
-  background: white;
-}
-
-.schedule-body,
-.main-schedule-body {
-  overflow: visible;
-}
-
+.schedule-corner-cell,
+.schedule-day-cell,
 .schedule-time-cell,
-.main-schedule-time-cell {
-  position: sticky;
-  left: 0;
-  z-index: 10;
-  height: 68px;
+.schedule-body-cell {
   display: flex;
   justify-content: center;
   align-items: center;
+  border-right: 1px solid #e2e5ef;
+  border-bottom: 1px solid #e2e5ef;
+  background: white;
+}
+
+.schedule-corner-cell {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  height: 48px;
   font-weight: bold;
-  border-right: 1px solid #e2e5ef;
-  border-bottom: 1px solid #e2e5ef;
   background: white;
 }
 
-.schedule-cell,
-.main-schedule-cell {
+.schedule-day-cell {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 48px;
+  font-weight: bold;
+  background: white;
+}
+
+.schedule-time-cell {
+  position: sticky;
+  left: 0;
+  z-index: 30;
   height: 68px;
-  border-right: 1px solid #e2e5ef;
-  border-bottom: 1px solid #e2e5ef;
+  font-weight: bold;
   background: white;
 }
 
-.schedule-cell {
+.schedule-body-cell {
+  height: 68px;
   cursor: pointer;
 }
 
-.schedule-cell.selected {
+.schedule-selected-cell {
   background: #4f6df5;
 }
 
-.main-schedule-common {
+.schedule-common-cell {
   background: #4f6df5;
 }
 
-.schedule-cell.readonly {
+.schedule-readonly-cell {
   cursor: not-allowed;
   background: #f3f3f3;
 }
 
-.schedule-cell.readonly.selected {
+.schedule-readonly-cell.schedule-selected-cell {
   background: #aeb9f5;
 }
 
@@ -697,43 +615,27 @@ td {
     padding: 8px 12px;
   }
 
-  .schedule-area,
-  .main-schedule-area {
+  .schedule-scroll-box {
+    width: calc(100% + 32px);
     margin-left: -16px;
     margin-right: -16px;
+    max-height: 72vh;
   }
 
-  .fixed-schedule-header {
+  .schedule-grid {
     grid-template-columns: 90px repeat(7, 78px);
     min-width: 636px;
   }
 
-  .schedule-header-row,
-  .schedule-row,
-  .main-schedule-header-row,
-  .main-schedule-row {
-    grid-template-columns: 90px repeat(7, 78px);
-    min-width: 636px;
-  }
-
-  .schedule-header-day,
-  .schedule-header-time,
-  .main-schedule-header-day,
-  .main-schedule-header-time,
-  .fixed-schedule-time,
-  .fixed-schedule-day {
+  .schedule-corner-cell,
+  .schedule-day-cell {
     height: 48px;
     font-size: 16px;
   }
 
   .schedule-time-cell,
-  .main-schedule-time-cell {
+  .schedule-body-cell {
     height: 68px;
     font-size: 16px;
-  }
-
-  .schedule-cell,
-  .main-schedule-cell {
-    height: 68px;
   }
 }
