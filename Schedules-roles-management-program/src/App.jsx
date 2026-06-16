@@ -234,9 +234,15 @@ function App() {
     if (!roomSnap.exists()) {
       removeJoinedRoom(code)
       setSavedRooms(getSavedRooms())
-      alert("존재하지 않는 방입니다. 목록에서 삭제합니다.")
+      alert("존재하지 않는 방입니다. 목록에서 삭제했습니다.")
       return
     }
+
+    const data = roomSnap.data()
+
+    saveJoinedRoom(code, data.roomName || "이름 없는 방")
+    setCurrentRoomName(data.roomName || "이름 없는 방")
+    setSavedRooms(getSavedRooms())
 
     setRoomCode(code)
     setIsJoined(true)
@@ -244,22 +250,26 @@ function App() {
   }
 
   const cleanSavedRooms = async () => {
-  const rooms = getSavedRooms()
+    const rooms = getSavedRooms()
+    const validRooms = []
 
-  const validRooms = []
+    for (const room of rooms) {
+      const roomRef = doc(db, "rooms", room.code)
+      const roomSnap = await getDoc(roomRef)
 
-  for (const room of rooms) {
-    const roomRef = doc(db, "rooms", room.code)
-    const roomSnap = await getDoc(roomRef)
+      if (roomSnap.exists()) {
+        const data = roomSnap.data()
 
-    if (roomSnap.exists()) {
-      validRooms.push(room)
+        validRooms.push({
+          ...room,
+          roomName: data.roomName || "이름 없는 방",
+        })
+      }
     }
-  }
 
-  localStorage.setItem("joinedRooms", JSON.stringify(validRooms))
-  setSavedRooms(validRooms)
-  }
+    localStorage.setItem("joinedRooms", JSON.stringify(validRooms))
+    setSavedRooms(validRooms)
+}
 
   const goToRoomList = () => {
     setIsJoined(false)
