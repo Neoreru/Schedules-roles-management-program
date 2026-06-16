@@ -820,42 +820,43 @@ function App() {
                 )}
 
                 <h3>가능 시간 선택</h3>
-
-                <table>
-                  <thead>
-                    <tr>
-                      <th>시간</th>
-                      {days.map((day) => (
-                        <th key={day}>{day}</th>
-                      ))}
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {times.map((time) => (
-                      <tr key={time}>
-                        <td>{time}</td>
-
-                        {days.map((day) => {
-                          const timeKey = `${day} ${time}`
-                          const checked = (member.availableTimes || []).includes(timeKey)
-
-                          return (
-                            <td
-                              key={day}
-                              className={`time-cell ${checked ? "selected" : ""} ${
-                                !mine ? "readonly" : ""
-                              }`}
-                              onClick={() => {
-                                if (mine) toggleTime(member, day, time)
-                              }}
-                            ></td>
-                          )
-                        })}
+                <div className="time-table-wrapper">
+                  <table className="time-table">
+                    <thead>
+                      <tr>
+                        <th>시간</th>
+                        {days.map((day) => (
+                          <th key={day}>{day}</th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+
+                    <tbody>
+                      {times.map((time) => (
+                        <tr key={time}>
+                          <td>{time}</td>
+
+                          {days.map((day) => {
+                            const timeKey = `${day} ${time}`
+                            const checked = (member.availableTimes || []).includes(timeKey)
+
+                            return (
+                              <td
+                                key={day}
+                                className={`time-cell ${checked ? "selected" : ""} ${
+                                  !mine ? "readonly" : ""
+                                }`}
+                                onClick={() => {
+                                  if (mine) toggleTime(member, day, time)
+                                }}
+                              ></td>
+                            )
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )
           })}

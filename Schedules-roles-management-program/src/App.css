@@ -641,3 +641,30 @@ th:first-child {
   z-index: 15;
   background: white;
 }
+
+.time-table-wrapper {
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid #e2e5ef;
+  border-radius: 12px;
+}
+
+.time-table th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: white;
+}
+
+.time-table th:first-child {
+  left: 0;
+  z-index: 5;
+}
+
+.time-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: white;
+  font-weight: bold;
+}
