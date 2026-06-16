@@ -395,6 +395,28 @@ table {
   margin-bottom: 10px;
 }
 
+@media (max-width: 768px) {
+  .top-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .room-code-box {
+    order: 1;
+  }
+
+  .app-title-small {
+    order: 2;
+  }
+
+  .room-list-button {
+    order: 3;
+  }
+}
+
+
+
 .room-code-box {
   font-size: 14px;
   font-weight: bold;

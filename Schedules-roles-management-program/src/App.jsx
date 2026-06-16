@@ -713,7 +713,7 @@ function App() {
                 ) : (
                   <div className="name-view-box">
                     <strong>
-                      {member.name} {mine ? "(내 정보)" : "(보기 전용)"}
+                      {member.name} {mine ? "(나)" : "(팀원)"}
                     </strong>
 
                     {mine && (
