@@ -532,9 +532,6 @@ function App() {
           방 코드: <strong>{roomCode}</strong>
         </div>
 
-        <div className="app-title-small">
-          팀플 시간, 역할 계획 프로그램
-        </div>
 
         <button
           className="room-list-button"
