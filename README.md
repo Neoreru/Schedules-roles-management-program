@@ -1,3 +1,6 @@
+>>바로가기
+https://schedules-roles-management-program.vercel.app/
+
 ## 기능
 <팀원 정보 관리 기능>
 -팀원 이름을 추가, 수정, 삭제하는 기능
