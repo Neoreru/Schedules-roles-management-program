@@ -89,6 +89,12 @@ function App() {
   const [editingRole, setEditingRole] = useState("")
   const [editingMemo, setEditingMemo] = useState("")
 
+  const [fixedHeader, setFixedHeader] = useState({
+    visible: false,
+    type: "",
+    left: 0,
+  })
+
   useEffect(() => {
     if (!isJoined || !roomCode) return
 
@@ -130,6 +136,74 @@ function App() {
       return prev.filter((id) => currentIds.includes(id))
     })
   }, [members])
+
+  useEffect(() => {
+    if (!isJoined) {
+      setFixedHeader({
+        visible: false,
+        type: "",
+        left: 0,
+      })
+      return
+    }
+
+    const updateFixedHeader = () => {
+      let selector = ""
+
+      if (page === "main" && viewMode === "image") {
+        selector = ".main-schedule-area"
+      }
+
+      if (page === "team") {
+        selector = ".schedule-area"
+      }
+
+      if (!selector) {
+        setFixedHeader({
+          visible: false,
+          type: "",
+          left: 0,
+        })
+        return
+      }
+
+      const scheduleElements = Array.from(document.querySelectorAll(selector))
+
+      const activeSchedule = scheduleElements.find((element) => {
+        const rect = element.getBoundingClientRect()
+        return rect.top <= 0 && rect.bottom > 48
+      })
+
+      if (!activeSchedule) {
+        setFixedHeader({
+          visible: false,
+          type: "",
+          left: 0,
+        })
+        return
+      }
+
+      const rect = activeSchedule.getBoundingClientRect()
+
+      setFixedHeader({
+        visible: true,
+        type: activeSchedule.classList.contains("main-schedule-area")
+          ? "main"
+          : "team",
+        left: rect.left,
+      })
+    }
+
+    updateFixedHeader()
+
+    window.addEventListener("scroll", updateFixedHeader)
+    window.addEventListener("resize", updateFixedHeader)
+
+    return () => {
+      window.removeEventListener("scroll", updateFixedHeader)
+      window.removeEventListener("resize", updateFixedHeader)
+    }
+  }, [isJoined, page, viewMode, members])
 
   const generateRoomCode = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase()
@@ -608,6 +682,23 @@ function App() {
 
   return (
     <div className="app-container">
+      {fixedHeader.visible && (
+        <div
+          className={`fixed-schedule-header ${
+            fixedHeader.type === "main" ? "fixed-main-header" : "fixed-team-header"
+          }`}
+          style={{ left: `${fixedHeader.left}px` }}
+        >
+          <div className="fixed-schedule-time">시간</div>
+
+          {days.map((day) => (
+            <div className="fixed-schedule-day" key={day}>
+              {day}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="top-bar">
         <div className="room-code-box">
           방 코드: <strong>{roomCode}</strong>

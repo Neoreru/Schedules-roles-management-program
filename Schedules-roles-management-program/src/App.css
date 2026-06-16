@@ -18,6 +18,10 @@ body {
   overflow-x: auto;
 }
 
+body {
+  min-height: 100vh;
+}
+
 /* 전체 컨테이너 */
 
 .container {
@@ -32,6 +36,50 @@ body {
   min-height: 100vh;
   padding: 40px;
 }
+
+/* 고정 요일 헤더 */
+
+.fixed-schedule-header {
+  position: fixed;
+  top: 0;
+  z-index: 9999;
+
+  display: grid;
+  grid-template-columns: 90px repeat(7, 78px);
+  min-width: 636px;
+
+  background: white;
+  border: 1px solid #e2e5ef;
+  border-bottom: 1px solid #d7dbea;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.fixed-schedule-time,
+.fixed-schedule-day {
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 16px;
+  font-weight: bold;
+  color: #1f2937;
+
+  background: white;
+  border-right: 1px solid #e2e5ef;
+}
+
+.fixed-schedule-time {
+  position: sticky;
+  left: 0;
+  z-index: 10000;
+}
+
+.fixed-schedule-day:last-child {
+  border-right: none;
+}
+
+/* 시작 화면 */
 
 .start-screen-wrapper {
   min-height: 100vh;
@@ -169,7 +217,7 @@ textarea {
   resize: vertical;
 }
 
-/* 시작 화면 */
+/* 시작 카드 */
 
 .start-card {
   max-width: 760px;
@@ -431,9 +479,8 @@ td {
 
 .schedule-header-row,
 .main-schedule-header-row {
-  position: sticky;
-  top: 0;
-  z-index: 500;
+  position: relative;
+  z-index: 5;
   background: white;
 }
 
@@ -441,7 +488,7 @@ td {
 .main-schedule-header-time {
   position: sticky;
   left: 0;
-  z-index: 600;
+  z-index: 20;
   background: white;
 }
 
@@ -468,7 +515,7 @@ td {
 .main-schedule-time-cell {
   position: sticky;
   left: 0;
-  z-index: 300;
+  z-index: 10;
   height: 68px;
   display: flex;
   justify-content: center;
@@ -629,6 +676,11 @@ td {
     margin-right: -16px;
   }
 
+  .fixed-schedule-header {
+    grid-template-columns: 90px repeat(7, 78px);
+    min-width: 636px;
+  }
+
   .schedule-header-row,
   .schedule-row,
   .main-schedule-header-row,
@@ -640,7 +692,9 @@ td {
   .schedule-header-day,
   .schedule-header-time,
   .main-schedule-header-day,
-  .main-schedule-header-time {
+  .main-schedule-header-time,
+  .fixed-schedule-time,
+  .fixed-schedule-day {
     height: 48px;
     font-size: 16px;
   }
