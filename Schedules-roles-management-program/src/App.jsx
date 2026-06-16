@@ -729,36 +729,37 @@ function App() {
           )}
 
           {viewMode === "image" && (
-            <div className="common-time-wrapper">
-              <table className="common-time-grid">
-                <thead>
-                  <tr>
-                    <th>시간</th>
-                    {days.map((day) => (
-                      <th key={day}>{day}</th>
-                    ))}
-                  </tr>
-                </thead>
+            <div className="main-schedule-box">
+              <div className="main-schedule-header-row">
+                <div className="main-schedule-header-time">시간</div>
 
-                <tbody>
-                  {times.map((time) => (
-                    <tr key={time}>
-                      <td>{time}</td>
+                {days.map((day) => (
+                  <div className="main-schedule-header-day" key={day}>
+                    {day}
+                  </div>
+                ))}
+              </div>
 
-                      {days.map((day) => {
-                        const common = isCommonTime(day, time)
+              <div className="main-schedule-body">
+                {times.map((time) => (
+                  <div className="main-schedule-row" key={time}>
+                    <div className="main-schedule-time-cell">{time}</div>
 
-                        return (
-                          <td
-                            key={day}
-                            className={common ? "common-time-block" : "empty-time-block"}
-                          ></td>
-                        )
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                    {days.map((day) => {
+                      const common = isCommonTime(day, time)
+
+                      return (
+                        <div
+                          key={day}
+                          className={`main-schedule-cell ${
+                            common ? "main-schedule-common" : ""
+                          }`}
+                        ></div>
+                      )
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
           <div className="leave-room-box">
