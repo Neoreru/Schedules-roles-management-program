@@ -1,9 +1,26 @@
+* {
+  box-sizing: border-box;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+html,
 body {
   margin: 0;
   background: #fafbfc;
   font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
   color: #2f3140;
 }
+
+body {
+  min-height: 100vh;
+}
+
+/* 전체 컨테이너 */
 
 .container {
   max-width: 1200px;
@@ -16,7 +33,6 @@ body {
   width: 100%;
   min-height: 100vh;
   padding: 40px;
-  box-sizing: border-box;
 }
 
 .start-screen-wrapper {
@@ -252,6 +268,7 @@ textarea {
   border: 1px solid #e2e5ef;
   border-radius: 20px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  overflow: visible;
 }
 
 .add-member-box {
@@ -397,8 +414,9 @@ td {
 
 .mobile-schedule-box {
   width: 100%;
-  max-height: 70vh;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: visible;
+  max-height: none;
   border: 1px solid #e2e5ef;
   border-radius: 12px;
   background: white;
@@ -407,21 +425,21 @@ td {
 .schedule-header-row,
 .schedule-row {
   display: grid;
-  grid-template-columns: 80px repeat(7, 72px);
-  min-width: 584px;
+  grid-template-columns: 90px repeat(7, 78px);
+  min-width: 636px;
 }
 
 .schedule-header-row {
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 100;
   background: white;
 }
 
 .schedule-header-time {
   position: sticky;
   left: 0;
-  z-index: 40;
+  z-index: 120;
   background: white;
 }
 
@@ -440,9 +458,9 @@ td {
 .schedule-time-cell {
   position: sticky;
   left: 0;
-  z-index: 20;
+  z-index: 80;
   background: white;
-  height: 64px;
+  height: 68px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -453,7 +471,7 @@ td {
 }
 
 .schedule-cell {
-  height: 64px;
+  height: 68px;
   border-right: 1px solid #e2e5ef;
   border-bottom: 1px solid #e2e5ef;
   background: white;
@@ -478,8 +496,9 @@ td {
 
 .main-schedule-box {
   width: 100%;
-  max-height: 70vh;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: visible;
+  max-height: none;
   border: 1px solid #e2e5ef;
   border-radius: 12px;
   background: white;
@@ -488,21 +507,21 @@ td {
 .main-schedule-header-row,
 .main-schedule-row {
   display: grid;
-  grid-template-columns: 80px repeat(7, 72px);
-  min-width: 584px;
+  grid-template-columns: 90px repeat(7, 78px);
+  min-width: 636px;
 }
 
 .main-schedule-header-row {
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 100;
   background: white;
 }
 
 .main-schedule-header-time {
   position: sticky;
   left: 0;
-  z-index: 40;
+  z-index: 120;
   background: white;
 }
 
@@ -521,9 +540,9 @@ td {
 .main-schedule-time-cell {
   position: sticky;
   left: 0;
-  z-index: 20;
+  z-index: 80;
   background: white;
-  height: 64px;
+  height: 68px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -534,7 +553,7 @@ td {
 }
 
 .main-schedule-cell {
-  height: 64px;
+  height: 68px;
   border-right: 1px solid #e2e5ef;
   border-bottom: 1px solid #e2e5ef;
   background: white;
@@ -583,7 +602,6 @@ td {
     margin: 0;
     padding: 20px 12px;
     border-radius: 0;
-    box-sizing: border-box;
   }
 
   .app-container {
@@ -611,7 +629,6 @@ td {
   .start-card {
     width: 100%;
     padding: 44px 20px;
-    box-sizing: border-box;
   }
 
   .start-title {
@@ -668,20 +685,10 @@ td {
     margin-left: -16px;
     margin-right: -16px;
     max-width: none;
-
     max-height: none;
     height: auto;
-
     overflow-x: auto;
-    overflow-y: hidden;
-
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .mobile-schedule-box::-webkit-scrollbar,
-  .main-schedule-box::-webkit-scrollbar {
-    display: none;
+    overflow-y: visible;
   }
 
   .schedule-header-row,
