@@ -1,4 +1,4 @@
-##바로가기
+링크:
 https://schedules-roles-management-program.vercel.app/
 
 ## 기능
