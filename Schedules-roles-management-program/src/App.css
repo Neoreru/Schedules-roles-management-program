@@ -408,12 +408,12 @@ td {
   vertical-align: middle;
 }
 
-/* 시간 관리 페이지 - div/grid 시간표 */
+/* 시간표 공통 구조 */
 
-.mobile-schedule-box {
+.schedule-area,
+.main-schedule-area {
   width: max-content;
   max-width: none;
-  max-height: none;
   overflow: visible;
   border: 1px solid #e2e5ef;
   border-radius: 12px;
@@ -421,28 +421,34 @@ td {
 }
 
 .schedule-header-row,
-.schedule-row {
+.schedule-row,
+.main-schedule-header-row,
+.main-schedule-row {
   display: grid;
   grid-template-columns: 90px repeat(7, 78px);
   min-width: 636px;
 }
 
-.schedule-header-row {
+.schedule-header-row,
+.main-schedule-header-row {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 500;
   background: white;
 }
 
-.schedule-header-time {
+.schedule-header-time,
+.main-schedule-header-time {
   position: sticky;
   left: 0;
-  z-index: 120;
+  z-index: 600;
   background: white;
 }
 
 .schedule-header-day,
-.schedule-header-time {
+.schedule-header-time,
+.main-schedule-header-day,
+.main-schedule-header-time {
   height: 48px;
   display: flex;
   justify-content: center;
@@ -450,14 +456,19 @@ td {
   font-weight: bold;
   border-right: 1px solid #e2e5ef;
   border-bottom: 1px solid #e2e5ef;
-  box-sizing: border-box;
+  background: white;
 }
 
-.schedule-time-cell {
+.schedule-body,
+.main-schedule-body {
+  overflow: visible;
+}
+
+.schedule-time-cell,
+.main-schedule-time-cell {
   position: sticky;
   left: 0;
-  z-index: 80;
-  background: white;
+  z-index: 300;
   height: 68px;
   display: flex;
   justify-content: center;
@@ -465,19 +476,26 @@ td {
   font-weight: bold;
   border-right: 1px solid #e2e5ef;
   border-bottom: 1px solid #e2e5ef;
-  box-sizing: border-box;
+  background: white;
 }
 
-.schedule-cell {
+.schedule-cell,
+.main-schedule-cell {
   height: 68px;
   border-right: 1px solid #e2e5ef;
   border-bottom: 1px solid #e2e5ef;
   background: white;
+}
+
+.schedule-cell {
   cursor: pointer;
-  box-sizing: border-box;
 }
 
 .schedule-cell.selected {
+  background: #4f6df5;
+}
+
+.main-schedule-common {
   background: #4f6df5;
 }
 
@@ -488,78 +506,6 @@ td {
 
 .schedule-cell.readonly.selected {
   background: #aeb9f5;
-}
-
-/* 메인 페이지 시간표 - div/grid 시간표 */
-
-.main-schedule-box {
-  width: max-content;
-  max-width: none;
-  max-height: none;
-  overflow: visible;
-  border: 1px solid #e2e5ef;
-  border-radius: 12px;
-  background: white;
-}
-
-.main-schedule-header-row,
-.main-schedule-row {
-  display: grid;
-  grid-template-columns: 90px repeat(7, 78px);
-  min-width: 636px;
-}
-
-.main-schedule-header-row {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: white;
-}
-
-.main-schedule-header-time {
-  position: sticky;
-  left: 0;
-  z-index: 120;
-  background: white;
-}
-
-.main-schedule-header-day,
-.main-schedule-header-time {
-  height: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  border-right: 1px solid #e2e5ef;
-  border-bottom: 1px solid #e2e5ef;
-  box-sizing: border-box;
-}
-
-.main-schedule-time-cell {
-  position: sticky;
-  left: 0;
-  z-index: 80;
-  background: white;
-  height: 68px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  border-right: 1px solid #e2e5ef;
-  border-bottom: 1px solid #e2e5ef;
-  box-sizing: border-box;
-}
-
-.main-schedule-cell {
-  height: 68px;
-  border-right: 1px solid #e2e5ef;
-  border-bottom: 1px solid #e2e5ef;
-  background: white;
-  box-sizing: border-box;
-}
-
-.main-schedule-common {
-  background: #4f6df5;
 }
 
 /* 나가기 */
@@ -677,15 +623,10 @@ td {
     padding: 8px 12px;
   }
 
-  .mobile-schedule-box,
-  .main-schedule-box {
-    width: max-content;
-    max-width: none;
-    max-height: none;
-    height: auto;
+  .schedule-area,
+  .main-schedule-area {
     margin-left: -16px;
     margin-right: -16px;
-    overflow: visible;
   }
 
   .schedule-header-row,
