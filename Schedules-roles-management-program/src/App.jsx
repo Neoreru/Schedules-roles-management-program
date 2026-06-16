@@ -196,12 +196,14 @@ function App() {
 
     updateFixedHeader()
 
-    window.addEventListener("scroll", updateFixedHeader)
+    window.addEventListener("scroll", updateFixedHeader, { passive: true })
     window.addEventListener("resize", updateFixedHeader)
+    document.addEventListener("scroll", updateFixedHeader, true)
 
     return () => {
       window.removeEventListener("scroll", updateFixedHeader)
       window.removeEventListener("resize", updateFixedHeader)
+      document.removeEventListener("scroll", updateFixedHeader, true)
     }
   }, [isJoined, page, viewMode, members])
 
@@ -683,21 +685,21 @@ function App() {
   return (
     <div className="app-container">
       {fixedHeader.visible && (
-        <div
-          className={`fixed-schedule-header ${
-            fixedHeader.type === "main" ? "fixed-main-header" : "fixed-team-header"
-          }`}
-          style={{ left: `${fixedHeader.left}px` }}
-        >
-          <div className="fixed-schedule-time">시간</div>
+          <div className="fixed-schedule-header">
+            <div className="fixed-schedule-time">시간</div>
 
-          {days.map((day) => (
-            <div className="fixed-schedule-day" key={day}>
-              {day}
+            <div
+              className="fixed-schedule-days-track"
+              style={{ left: `${fixedHeader.left + 90}px` }}
+            >
+              {days.map((day) => (
+                <div className="fixed-schedule-day" key={day}>
+                  {day}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
 
       <div className="top-bar">
         <div className="room-code-box">
