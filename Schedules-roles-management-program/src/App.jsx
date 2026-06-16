@@ -384,40 +384,41 @@ function App() {
         )}
 
         {roomMode === "createName" && (
-          <section className="center-card">
+          <section className="fullscreen-center">
             <h2>방 정보 입력</h2>
+            <div className="create-room-row">
+              <input
+                className="name-input"
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+                placeholder="방 이름 입력"
+              />
 
-            <input
-              className="name-input"
-              value={roomName}
-              onChange={(e) => setRoomName(e.target.value)}
-              placeholder="방 이름 입력"
-            />
+              <input
+                className="name-input"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder="내 이름 입력"
+              />
 
-            <input
-              className="name-input"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              placeholder="내 이름 입력"
-            />
+              <button onClick={enterRoomWithName}>생성하기</button>
 
-            <button onClick={enterRoomWithName}>생성하기</button>
-
-            <button
-              onClick={() => {
-                setRoomCode("")
-                setRoomName("")
-                setUserName("")
-                setRoomMode("start")
-              }}
-            >
-              뒤로가기
-            </button>
+              <button
+                onClick={() => {
+                  setRoomCode("")
+                  setRoomName("")
+                  setUserName("")
+                  setRoomMode("start")
+                }}
+              >
+                뒤로가기
+              </button>
+            </div>
           </section>
         )}
 
         {roomMode === "join" && (
-          <section className="center-card">
+          <section className="fullscreen-center">
             <h2>방 입장</h2>
 
             <input
@@ -441,7 +442,7 @@ function App() {
         )}
 
         {roomMode === "joinName" && (
-          <section className="center-card">
+          <section className="fullscreen-center">
             <h2>이름 입력</h2>
             <p>입장할 방 코드: {roomCode}</p>
 
