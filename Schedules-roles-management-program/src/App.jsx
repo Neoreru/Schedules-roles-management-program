@@ -272,6 +272,15 @@ function App() {
 
   await Promise.all(deletePromises)
 
+  // 남은 팀원 확인
+  const remainSnapshot = await getDocs(
+    collection(db, "rooms", roomCode, "members")
+  )
+
+  if (remainSnapshot.empty) {
+    await deleteDoc(doc(db, "rooms", roomCode))
+  }
+
   removeJoinedRoom(roomCode)
 
   setSavedRooms(getSavedRooms())
@@ -719,7 +728,7 @@ function App() {
           )}
           <div className="leave-room-box">
             <button className="leave-room-button" onClick={leaveRoom}>
-              이 방 나가기
+              나가기
             </button>
           </div>
         </section>
