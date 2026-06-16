@@ -389,10 +389,14 @@ table {
 
 
 .top-bar {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+}
+
+.room-list-button {
+  margin-left: auto;
 }
 
 @media (max-width: 768px) {
