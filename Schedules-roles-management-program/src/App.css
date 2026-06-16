@@ -482,9 +482,9 @@ table {
   padding: 56px 48px;
   text-align: center;
   background: #FFFFFF;
-  border: 2px solid #FFD54F;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
   border-radius: 32px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
 }
 
 .start-badge {
@@ -495,8 +495,8 @@ table {
   font-weight: 700;
   letter-spacing: 1px;
   border-radius: 999px;
-  background: #FFE082;
-  color: #795548;
+  background: #F3F4F6;
+  color: #4F6DF5;
 }
 
 .start-title {
@@ -536,8 +536,8 @@ table {
   padding: 16px 24px;
   font-size: 17px;
   font-weight: 700;
-  background: #FFF3CD;
-  color: #795548;
+  background: #F3F4F6;
+  color: #111827;
   border: none;
   border-radius: 16px;
   cursor: pointer;
@@ -566,5 +566,5 @@ table {
 }
 
 body {
-  background: #FFF8E6;
+  background: #FAFBFC;
 }
