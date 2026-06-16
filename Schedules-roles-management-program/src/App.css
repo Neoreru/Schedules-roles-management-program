@@ -609,3 +609,23 @@ body {
   padding: 40px;
   box-sizing: border-box;
 }
+
+
+.leave-room-box {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.leave-room-button {
+  padding: 12px 22px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+  background: #f1f2f5;
+  color: #333;
+  cursor: pointer;
+}
+
+.leave-room-button:hover {
+  background: #e2e4e8;
+}

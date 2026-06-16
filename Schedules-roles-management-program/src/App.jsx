@@ -4,6 +4,7 @@ import {
   addDoc,
   doc,
   updateDoc,
+  deleteDoc,
   onSnapshot,
   query,
   orderBy,
@@ -54,6 +55,13 @@ function saveJoinedRoom(roomCode, roomName) {
       joinedAt: Date.now(),
     },
   ]
+
+  localStorage.setItem("joinedRooms", JSON.stringify(newRooms))
+}
+
+function removeJoinedRoom(roomCode) {
+  const savedRooms = getSavedRooms()
+  const newRooms = savedRooms.filter((room) => room.code !== roomCode)
 
   localStorage.setItem("joinedRooms", JSON.stringify(newRooms))
 }
@@ -245,6 +253,38 @@ function App() {
     setRoomMode("start")
     setSavedRooms(getSavedRooms())
   }
+
+  const leaveRoom = async () => {
+  const confirmLeave = window.confirm("이 방을 나가시겠습니까?")
+
+  if (!confirmLeave) return
+
+  const q = query(
+    collection(db, "rooms", roomCode, "members"),
+    where("ownerId", "==", deviceId)
+  )
+
+  const snapshot = await getDocs(q)
+
+  const deletePromises = snapshot.docs.map((memberDoc) =>
+    deleteDoc(doc(db, "rooms", roomCode, "members", memberDoc.id))
+  )
+
+  await Promise.all(deletePromises)
+
+  removeJoinedRoom(roomCode)
+
+  setSavedRooms(getSavedRooms())
+  setIsJoined(false)
+  setRoomCode("")
+  setCurrentRoomName("")
+  setPage("main")
+  setMembers([])
+  setSelectedMemberIds([])
+  setEditingNameId(null)
+  setEditingRoleId(null)
+  setRoomMode("start")
+}
 
   const isMine = (member) => {
     return member.ownerId === deviceId
@@ -677,6 +717,11 @@ function App() {
               </tbody>
             </table>
           )}
+          <div className="leave-room-box">
+            <button className="leave-room-button" onClick={leaveRoom}>
+              이 방 나가기
+            </button>
+          </div>
         </section>
       )}
 
