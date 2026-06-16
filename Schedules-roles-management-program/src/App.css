@@ -683,8 +683,8 @@ th:first-child {
 .schedule-header-row,
 .schedule-row {
   display: grid;
-  grid-template-columns: 110px repeat(7, 110px);
-  min-width: 880px;
+  grid-template-columns: 70px repeat(7, 70px);
+  min-width: 6200px;
 }
 
 .schedule-header-row {
@@ -740,4 +740,93 @@ th:first-child {
 
 .schedule-cell.readonly {
   cursor: not-allowed;
+}
+
+
+@media (max-width: 768px) {
+  .card {
+    padding: 12px;
+    margin: 12px 0;
+  }
+
+  .mobile-schedule-box {
+    width: 100%;
+  }
+
+  .schedule-header-row,
+  .schedule-row {
+    grid-template-columns: 80px repeat(7, 72px);
+    min-width: 584px;
+  }
+
+  .schedule-header-day,
+  .schedule-header-time {
+    height: 48px;
+    font-size: 16px;
+  }
+
+  .schedule-time-cell {
+    height: 64px;
+    font-size: 16px;
+  }
+
+  .schedule-cell {
+    height: 64px;
+  }
+}
+
+
+
+.common-time-wrapper {
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid #e2e5ef;
+  border-radius: 12px;
+}
+
+.common-time-wrapper .common-time-grid {
+  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.common-time-wrapper .common-time-grid thead th {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: #eef2ff;
+}
+
+.common-time-wrapper .common-time-grid th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 40;
+  background: white;
+}
+
+.common-time-wrapper .common-time-grid td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background: white;
+  font-weight: bold;
+}
+
+
+@media (max-width: 768px) {
+  .common-time-wrapper .common-time-grid {
+    min-width: 584px;
+  }
+
+  .common-time-wrapper .common-time-grid th,
+  .common-time-wrapper .common-time-grid td {
+    min-width: 72px;
+    height: 64px;
+    font-size: 16px;
+  }
+
+  .common-time-wrapper .common-time-grid th:first-child,
+  .common-time-wrapper .common-time-grid td:first-child {
+    min-width: 80px;
+  }
 }

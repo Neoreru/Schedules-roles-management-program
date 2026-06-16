@@ -729,35 +729,37 @@ function App() {
           )}
 
           {viewMode === "image" && (
-            <table className="common-time-grid">
-              <thead>
-                <tr>
-                  <th>시간</th>
-                  {days.map((day) => (
-                    <th key={day}>{day}</th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {times.map((time) => (
-                  <tr key={time}>
-                    <td>{time}</td>
-
-                    {days.map((day) => {
-                      const common = isCommonTime(day, time)
-
-                      return (
-                        <td
-                          key={day}
-                          className={common ? "common-time-block" : "empty-time-block"}
-                        ></td>
-                      )
-                    })}
+            <div className="common-time-wrapper">
+              <table className="common-time-grid">
+                <thead>
+                  <tr>
+                    <th>시간</th>
+                    {days.map((day) => (
+                      <th key={day}>{day}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {times.map((time) => (
+                    <tr key={time}>
+                      <td>{time}</td>
+
+                      {days.map((day) => {
+                        const common = isCommonTime(day, time)
+
+                        return (
+                          <td
+                            key={day}
+                            className={common ? "common-time-block" : "empty-time-block"}
+                          ></td>
+                        )
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
           <div className="leave-room-box">
             <button className="leave-room-button" onClick={leaveRoom}>
