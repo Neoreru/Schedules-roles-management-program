@@ -3,6 +3,7 @@ https://schedules-roles-management-program.vercel.app/
 
 ## 기능
 <팀원 정보 관리 기능>
+
 -팀원 이름을 추가, 수정, 삭제하는 기능
 
 -각 팀원별로 가능한 요일과 시간을 선택, 수정, 삭제 하는 기능
@@ -18,6 +19,7 @@ https://schedules-roles-management-program.vercel.app/
 -각 팀원별 메모를 작성하는 기능
 
 <데이터 저장 기능>
+
 -입력한 팀원 정보, 가능한 시간, 역할, 메모를 저장하는 기능
 
 -프로그램을 다시 실행하거나 새로고침해도 저장된 데이터를 다시 불러오는 기능
